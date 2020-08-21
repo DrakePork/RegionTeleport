@@ -1,0 +1,37 @@
+name: RegionTeleport
+version: ${project.version}
+main: src.com.drakepork.regionteleport.RegionTeleport
+api-version: 1.16
+depend: [WorldGuard]
+authors: [DrakePork]
+description: A plugin to teleport anyone inside a worldguard region to a specified point.
+commands:
+  regiontp:
+    description: Contains all commands of the plugin
+    usage: /<command>
+    aliases: [regionteleport]
+    permission: regionteleport.help
+    permission-message: §4Error:§c You do not have permission to execute this command...
+permissions:
+  regionteleport.command.*:
+    description: Gives access to all regiontp commands
+    children:
+      regionteleport.command.help: true
+      regionteleport.command.setspawn: true
+      regionteleport.command.delspawn: true
+      regionteleport.command.spawnlist: true
+      regionteleport.command.teleport: true
+  regionteleport.command.help:
+    description: Gives access to /regiontp help
+  regionteleport.command.setspawn:
+    description: Gives access to /regiontp setspawn <name>
+  regionteleport.command.delspawn:
+    description: Gives access to /regiontp delspawn <name>
+  regionteleport.command.spawnlist:
+    description: Gives access to /regiontp spawnlist
+  regionteleport.command.teleport:
+    description: Gives access to /regiontp tp
+  regionteleport.teleport.bypass:
+    description: Does so you dont get teleported from the region
+    default: not op
+
