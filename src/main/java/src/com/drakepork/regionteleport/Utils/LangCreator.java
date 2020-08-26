@@ -34,6 +34,7 @@ public class LangCreator extends PluginReceiver {
 				langConf.addDefault("spawn.wrong-usage-setspawn", "&cIncorrect usage! /regiontp setspawn <name>");
 				langConf.addDefault("spawn.wrong-usage-delspawn", "&cIncorrect usage! /regiontp delspawn <name>");
 				langConf.addDefault("spawn.wrong-usage-spawnlist", "&cIncorrect usage! /regiontp spawnlist");
+				langConf.addDefault("spawn.successful-setspawn", "&2Spawn location with name [name] set at your location");
 
 				// Teleport Related Messages
 

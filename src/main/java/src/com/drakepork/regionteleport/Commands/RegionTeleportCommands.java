@@ -11,6 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public class RegionTeleportCommands extends PluginReceiver implements CommandExecutor {
@@ -26,6 +27,9 @@ public class RegionTeleportCommands extends PluginReceiver implements CommandExe
 			List<String> cmdList = (List<String>) langConf.getList("global.help");
 			String noPerm = regionteleport.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', langConf.getString("global.no-perm")));
 			String prefix = langConf.getString("global.plugin-prefix");
+
+			File spawnloc = new File(regionteleport.getDataFolder() + File.separator + "spawnlocations.yml");
+			YamlConfiguration spawnConf = YamlConfiguration.loadConfiguration(spawnloc);
 
 			String commandHelp = null;
 			for(int i = 0; i < cmdList.size(); i++) {
@@ -67,7 +71,20 @@ public class RegionTeleportCommands extends PluginReceiver implements CommandExe
 							return true;
 						}
 
-
+						spawnConf.set(args[1] + ".world", player.getLocation().getWorld().getName());
+						spawnConf.set(args[1] + ".x", Double.valueOf(player.getLocation().getX()));
+						spawnConf.set(args[1] + ".y", Double.valueOf(player.getLocation().getY()));
+						spawnConf.set(args[1] + ".z", Double.valueOf(player.getLocation().getZ()));
+						spawnConf.set(args[1] + ".yaw", Float.valueOf(player.getLocation().getYaw()));
+						spawnConf.set(args[1] + ".pitch", Float.valueOf(player.getLocation().getPitch()));
+						try {
+							spawnConf.save(spawnloc);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						String setspawnSuccess = langConf.getString("spawn.successful-setspawn").replaceAll("\\[name\\]", args[1]);
+						player.sendMessage(regionteleport.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + setspawnSuccess)));
+						return true;
 					} else {
 						player.sendMessage(noPerm);
 					}
@@ -111,7 +128,6 @@ public class RegionTeleportCommands extends PluginReceiver implements CommandExe
 							player.sendMessage(regionteleport.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + langConf.getString("teleport.wrong-usage"))));
 							return true;
 						}
-
 
 
 					} else {
