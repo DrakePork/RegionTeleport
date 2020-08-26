@@ -10,5 +10,7 @@ public class ConfigCreator extends PluginReceiver {
 
 	public void init() {
 		FileConfiguration config = regionteleport.getConfig();
+		config.options().copyDefaults(true);
+		regionteleport.saveConfig();
 	}
 }

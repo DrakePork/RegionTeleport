@@ -21,7 +21,7 @@ public class LangCreator extends PluginReceiver {
 				langConf.addDefault("global.plugin-prefix", "&f[&aRegionTeleport&f] ");
 				ArrayList cmdHelp = new ArrayList();
 				cmdHelp.add("&a-----=== &9RegionTP &a===-----");
-				cmdHelp.add("&2/regiontp <region> <spawn> (-s) &f- &aTeleport all players within a region to the specified location");
+				cmdHelp.add("&2/regiontp tp <region> <spawn> (-s) &f- &aTeleport all players within a region to the specified location");
 				cmdHelp.add("&2/regiontp setspawn <name> &f- &aCreate new regiontp location");
 				cmdHelp.add("&2/regiontp delspawn <name> &f- &aDelete a regiontp location");
 				cmdHelp.add("&2/regiontp list &f- &aLists all RegionTP Locations");
@@ -36,7 +36,9 @@ public class LangCreator extends PluginReceiver {
 				langConf.addDefault("spawn.wrong-usage-spawnlist", "&cIncorrect usage! /regiontp spawnlist");
 
 				// Teleport Related Messages
-				
+
+				langConf.addDefault("teleport.wrong-usage", "&cIncorrect Usage! /regiontp tp <region <spawn>");
+				langConf.addDefault("teleport.successful-teleport", "");
 
 				langConf.save(lang);
 			} catch (IOException e) {

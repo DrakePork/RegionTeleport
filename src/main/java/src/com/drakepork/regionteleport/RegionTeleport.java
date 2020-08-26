@@ -29,10 +29,6 @@ public final class RegionTeleport extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
-        config.addDefault("plugin-prefix", "&f[&2RegionTeleport&f]");
-        config.options().copyDefaults(true);
-        saveConfig();
-
         ConfigCreator.init();
         lang.init();
 

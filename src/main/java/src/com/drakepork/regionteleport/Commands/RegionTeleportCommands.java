@@ -103,14 +103,15 @@ public class RegionTeleportCommands extends PluginReceiver implements CommandExe
 				case "tp":
 					if(player.hasPermission("regionteleport.command.teleport")) {
 						if (args.length < 2) {
-							player.sendMessage(regionteleport.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + langConf.getString("spawn.specify-loc-name"))));
+							player.sendMessage(regionteleport.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + langConf.getString("teleport.wrong-usage"))));
 							return true;
 						}
 
 						if (args.length > 2) {
-							player.sendMessage(regionteleport.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + langConf.getString("spawn.wrong-usage-delspawn"))));
+							player.sendMessage(regionteleport.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + langConf.getString("teleport.wrong-usage"))));
 							return true;
 						}
+
 
 
 					} else {
