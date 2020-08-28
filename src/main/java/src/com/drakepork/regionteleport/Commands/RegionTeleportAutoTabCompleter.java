@@ -43,8 +43,14 @@ public class RegionTeleportAutoTabCompleter extends PluginReceiver implements Ta
 							}
 							break;
 						case "setspawn":
-						case "delspawn":
 							options.add("<name>");
+							break;
+						case "delspawn":
+							File spawnloc = new File(regionteleport.getDataFolder() + File.separator + "spawnlocations.yml");
+							YamlConfiguration spawnConf = YamlConfiguration.loadConfiguration(spawnloc);
+							for (String spawn : spawnConf.getKeys(false)) {
+								options.add(spawn);
+							}
 							break;
 					}
 
