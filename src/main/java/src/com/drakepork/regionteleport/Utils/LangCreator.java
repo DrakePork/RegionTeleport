@@ -28,11 +28,11 @@ public class LangCreator {
 				langConf.set("global.plugin-prefix", "&f[&aRegionTeleport&f] ");
 				ArrayList cmdHelp = new ArrayList();
 				cmdHelp.add("&a-----=== &9RegionTP &a===-----");
-				cmdHelp.add("&2/regiontp help &f- &aShows this");
-				cmdHelp.add("&2/regiontp tp <region> <spawn> (-s) &f- &aTeleport all players within a region to the specified location");
-				cmdHelp.add("&2/regiontp setspawn <name> &f- &aCreate new regiontp location");
-				cmdHelp.add("&2/regiontp delspawn <name> &f- &aDelete a regiontp location");
-				cmdHelp.add("&2/regiontp spawnlist &f- &aLists all RegionTP Locations");
+				cmdHelp.add("&2/regiontp help &f- &aShows all commands");
+				cmdHelp.add("&2/regiontp teleport/tp <region> <spawn> (-s) &f- &aTeleports all players within the region to the specified location");
+				cmdHelp.add("&2/regiontp setspawn <name> &f- &aCreates a spawn location");
+				cmdHelp.add("&2/regiontp delspawn <name> &f- &aDeletes a spawn location");
+				cmdHelp.add("&2/regiontp spawnlist &f- &aLists all spawn Locations");
 				langConf.set("global.help", cmdHelp);
 				langConf.set("global.no-perm", "&4Error: &cYou do not have permission to execute this command...");
 
