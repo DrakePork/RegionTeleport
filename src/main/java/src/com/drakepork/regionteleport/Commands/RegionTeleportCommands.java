@@ -1,5 +1,6 @@
 package src.com.drakepork.regionteleport.Commands;
 
+import com.google.inject.Inject;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.WorldGuard;
@@ -12,7 +13,6 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import src.com.drakepork.regionteleport.Utils.PluginReceiver;
 import src.com.drakepork.regionteleport.RegionTeleport;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -24,26 +24,29 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-public class RegionTeleportCommands extends PluginReceiver implements CommandExecutor {
-	public RegionTeleportCommands(final RegionTeleport regionteleport) {
-		super(regionteleport);
+public class RegionTeleportCommands implements CommandExecutor {
+	private RegionTeleport plugin;
+
+	@Inject
+	public RegionTeleportCommands(RegionTeleport plugin) {
+		this.plugin = plugin;
 	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if(sender instanceof Player) {
-			File lang = new File(regionteleport.getDataFolder() + File.separator + "lang.yml");
+			File lang = new File(this.plugin.getDataFolder() + File.separator + "lang.yml");
 			FileConfiguration langConf = YamlConfiguration.loadConfiguration(lang);
 			List<String> cmdList = (List<String>) langConf.getList("global.help");
-			String noPerm = regionteleport.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', langConf.getString("global.no-perm")));
+			String noPerm = this.plugin.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', langConf.getString("global.no-perm")));
 			String prefix = langConf.getString("global.plugin-prefix");
 
-			File spawnloc = new File(regionteleport.getDataFolder() + File.separator + "spawnlocations.yml");
+			File spawnloc = new File(this.plugin.getDataFolder() + File.separator + "spawnlocations.yml");
 			YamlConfiguration spawnConf = YamlConfiguration.loadConfiguration(spawnloc);
 
 			String commandHelp = null;
 			for(int i = 0; i < cmdList.size(); i++) {
-				commandHelp += cmdList.get(i);
+				commandHelp += this.plugin.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', cmdList.get(i)));
 
 				if(i + 1 < cmdList.size()) {
 					commandHelp += "\n";
@@ -72,12 +75,18 @@ public class RegionTeleportCommands extends PluginReceiver implements CommandExe
 				case "setspawn":
 					if(player.hasPermission("regionteleport.command.setspawn")) {
 						if (args.length < 2) {
-							player.sendMessage(regionteleport.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + langConf.getString("spawn.specify-loc-name"))));
+							player.sendMessage(this.plugin.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + langConf.getString("spawn.specify-loc-name"))));
 							return true;
 						}
 
 						if (args.length > 2) {
-							player.sendMessage(regionteleport.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + langConf.getString("spawn.wrong-usage-setspawn"))));
+							player.sendMessage(this.plugin.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + langConf.getString("spawn.wrong-usage-setspawn"))));
+							return true;
+						}
+
+						if (spawnConf.contains(args[1])) {
+							String spawnExist = langConf.getString("spawn.spawn-already-exists").replaceAll("\\[name\\]", args[1]);
+							player.sendMessage(this.plugin.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + spawnExist)));
 							return true;
 						}
 
@@ -90,7 +99,7 @@ public class RegionTeleportCommands extends PluginReceiver implements CommandExe
 						try {
 							spawnConf.save(spawnloc);
 							String setspawnSuccess = langConf.getString("spawn.successful-setspawn").replaceAll("\\[name\\]", args[1]);
-							player.sendMessage(regionteleport.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + setspawnSuccess)));
+							player.sendMessage(this.plugin.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + setspawnSuccess)));
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
@@ -102,12 +111,12 @@ public class RegionTeleportCommands extends PluginReceiver implements CommandExe
 				case "delspawn":
 					if(player.hasPermission("regionteleport.command.delspawn")) {
 						if (args.length < 2) {
-							player.sendMessage(regionteleport.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + langConf.getString("spawn.specify-loc-name"))));
+							player.sendMessage(this.plugin.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + langConf.getString("spawn.specify-loc-name"))));
 							return true;
 						}
 
 						if (args.length > 2) {
-							player.sendMessage(regionteleport.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + langConf.getString("spawn.wrong-usage-delspawn"))));
+							player.sendMessage(this.plugin.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + langConf.getString("spawn.wrong-usage-delspawn"))));
 							return true;
 						}
 
@@ -116,15 +125,15 @@ public class RegionTeleportCommands extends PluginReceiver implements CommandExe
 							try {
 								spawnConf.save(spawnloc);
 								String delspawnSuccess = langConf.getString("spawn.successful-delspawn").replaceAll("\\[name\\]", args[1]);
-								player.sendMessage(regionteleport.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + delspawnSuccess)));
+								player.sendMessage(this.plugin.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + delspawnSuccess)));
 							} catch (IOException e) {
 								e.printStackTrace();
 								String delspawnFail = langConf.getString("spawn.failed-delspawn").replaceAll("\\[name\\]", args[1]);
-								player.sendMessage(regionteleport.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + delspawnFail)));
+								player.sendMessage(this.plugin.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + delspawnFail)));
 							}
 						} else {
 							String noSpawn = langConf.getString("spawn.no-such-spawn").replaceAll("\\[name\\]", args[1]);
-							player.sendMessage(regionteleport.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + noSpawn)));
+							player.sendMessage(this.plugin.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + noSpawn)));
 						}
 
 					} else {
@@ -134,14 +143,14 @@ public class RegionTeleportCommands extends PluginReceiver implements CommandExe
 				case "spawnlist":
 					if(player.hasPermission("regionteleport.command.spawnlist")) {
 						if (args.length > 2) {
-							player.sendMessage(regionteleport.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + langConf.getString("spawn.wrong-usage-spawnlist"))));
+							player.sendMessage(this.plugin.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + langConf.getString("spawn.wrong-usage-spawnlist"))));
 							return true;
 						}
 
-						player.sendMessage(regionteleport.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', langConf.getString("spawn.list-header"))));
+						player.sendMessage(this.plugin.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', langConf.getString("spawn.list-header"))));
 						for (String spawnName : spawnConf.getKeys(false)) {
 							String spawn = langConf.getString("spawn.list-spawn").replaceAll("\\[name\\]", spawnName);
-							player.sendMessage(regionteleport.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', spawn)));
+							player.sendMessage(this.plugin.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', spawn)));
 						}
 					} else {
 						player.sendMessage(noPerm);
@@ -151,12 +160,12 @@ public class RegionTeleportCommands extends PluginReceiver implements CommandExe
 				case "tp":
 					if(player.hasPermission("regionteleport.command.teleport")) {
 						if (args.length < 2) {
-							player.sendMessage(regionteleport.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + langConf.getString("teleport.wrong-usage"))));
+							player.sendMessage(this.plugin.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + langConf.getString("teleport.wrong-usage"))));
 							return true;
 						}
 
-						if (args.length > 2) {
-							player.sendMessage(regionteleport.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + langConf.getString("teleport.wrong-usage"))));
+						if (args.length > 4) {
+							player.sendMessage(this.plugin.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + langConf.getString("teleport.wrong-usage"))));
 							return true;
 						}
 
@@ -199,21 +208,21 @@ public class RegionTeleportCommands extends PluginReceiver implements CommandExe
 								}
 								if(args.length > 4) {
 									if(!args[3].equalsIgnoreCase(("-s"))) {
-										player.sendMessage(regionteleport.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + langConf.getString("teleport.wrong-usage"))));
+										player.sendMessage(this.plugin.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + langConf.getString("teleport.wrong-usage"))));
 									}
 								} else {
-									String noSpawn1 = langConf.getString("spawn.teleport.successful-teleport").replaceAll("\\[name\\]", args[2]);
-									String noSpawn2 = noSpawn1.replaceAll("\\[region\\]", args[1]);
-									String noSpawn3 = noSpawn2.replaceAll("\\[amount\\]", String.valueOf(teleported));
-									player.sendMessage(regionteleport.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + noSpawn3)));
+									String tpSuccess = langConf.getString("teleport.successful-teleport").replaceAll("\\[name\\]", args[2]);
+									tpSuccess = tpSuccess.replaceAll("\\[region\\]", args[1]);
+									tpSuccess = tpSuccess.replaceAll("\\[amount\\]", String.valueOf(teleported));
+									player.sendMessage(this.plugin.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + tpSuccess)));
 								}
 							} else {
-								String noSpawn = langConf.getString("spawn.no-such-region").replaceAll("\\[name\\]", args[1]);
-								player.sendMessage(regionteleport.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + noSpawn)));
+								String noRegion = langConf.getString("teleport.no-such-region").replaceAll("\\[name\\]", args[1]);
+								player.sendMessage(this.plugin.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + noRegion)));
 							}
 						} else {
 							String noSpawn = langConf.getString("spawn.no-such-spawn").replaceAll("\\[name\\]", args[2]);
-							player.sendMessage(regionteleport.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + noSpawn)));
+							player.sendMessage(this.plugin.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + noSpawn)));
 						}
 
 					} else {

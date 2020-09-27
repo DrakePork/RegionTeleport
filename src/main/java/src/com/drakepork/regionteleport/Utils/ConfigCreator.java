@@ -1,16 +1,21 @@
 package src.com.drakepork.regionteleport.Utils;
 
+import com.google.inject.Inject;
 import org.bukkit.configuration.file.FileConfiguration;
 import src.com.drakepork.regionteleport.RegionTeleport;
 
-public class ConfigCreator extends PluginReceiver {
-	public ConfigCreator (final RegionTeleport regionteleport) {
-		super(regionteleport);
+
+public class ConfigCreator {
+	private RegionTeleport plugin;
+
+	@Inject
+	public ConfigCreator(RegionTeleport plugin) {
+		this.plugin = plugin;
 	}
 
 	public void init() {
-		FileConfiguration config = regionteleport.getConfig();
+		FileConfiguration config = this.plugin.getConfig();
 		config.options().copyDefaults(true);
-		regionteleport.saveConfig();
+		this.plugin.saveConfig();
 	}
 }

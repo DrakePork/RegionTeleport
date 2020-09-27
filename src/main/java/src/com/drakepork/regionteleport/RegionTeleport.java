@@ -1,11 +1,15 @@
 package src.com.drakepork.regionteleport;
 
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import src.com.drakepork.regionteleport.Commands.RegionTeleportAutoTabCompleter;
 import src.com.drakepork.regionteleport.Commands.RegionTeleportCommands;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import src.com.drakepork.regionteleport.Utils.ConfigCreator;
 import src.com.drakepork.regionteleport.Utils.LangCreator;
+import src.com.drakepork.regionteleport.Utils.PluginReceiver;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,20 +21,24 @@ public final class RegionTeleport extends JavaPlugin {
     FileConfiguration config = this.getConfig();
     private static RegionTeleport instance;
 
-
     public static RegionTeleport getInstance() {
         return instance;
     }
 
-    private LangCreator lang;
-    private ConfigCreator ConfigCreator;
+    @Inject private LangCreator lang;
+    @Inject private ConfigCreator ConfigCreator;
+    @Inject private RegionTeleportCommands commands;
+    @Inject private RegionTeleportAutoTabCompleter tabCompleter;
 
     @Override
     public void onEnable() {
-        instance = this;
+        PluginReceiver module = new PluginReceiver(this);
+        Injector injector = module.createInjector();
+        injector.injectMembers(this);
 
-        ConfigCreator.init();
-        lang.init();
+        instance = this;
+        this.ConfigCreator.init();
+        this.lang.init();
 
         File spawnloc = new File(this.getDataFolder() + File.separator + "spawnlocations.yml");
         if(!spawnloc.exists()) {
@@ -41,7 +49,8 @@ public final class RegionTeleport extends JavaPlugin {
             }
         }
 
-        getCommand("regiontp").setExecutor(new RegionTeleportCommands(this));
+        this.getCommand("regiontp").setExecutor(this.commands);
+        this.getCommand("regiontp").setTabCompleter(this.tabCompleter);
         getLogger().info("Enabled RegionTeleport - version " + getDescription().getVersion());
     }
 

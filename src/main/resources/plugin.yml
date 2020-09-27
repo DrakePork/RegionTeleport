@@ -3,7 +3,7 @@ version: ${project.version}
 main: src.com.drakepork.regionteleport.RegionTeleport
 api-version: 1.16
 depend: [WorldGuard]
-authors: [DrakePork]
+author: DrakePork
 description: A plugin to teleport anyone inside a worldguard region to a specified point.
 commands:
   regiontp:
@@ -33,5 +33,5 @@ permissions:
     description: Gives access to /regiontp tp
   regionteleport.teleport.bypass:
     description: Does so you dont get teleported from the region
-    default: not op
+    default: false
 

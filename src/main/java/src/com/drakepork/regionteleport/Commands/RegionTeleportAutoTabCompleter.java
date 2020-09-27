@@ -1,5 +1,6 @@
 package src.com.drakepork.regionteleport.Commands;
 
+import com.google.inject.Inject;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.managers.RegionManager;
@@ -8,17 +9,21 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 import src.com.drakepork.regionteleport.RegionTeleport;
-import src.com.drakepork.regionteleport.Utils.PluginReceiver;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class RegionTeleportAutoTabCompleter extends PluginReceiver implements TabCompleter {
-	public RegionTeleportAutoTabCompleter(final RegionTeleport regionteleport) {
-		super(regionteleport);
+public class RegionTeleportAutoTabCompleter implements TabCompleter {
+	private RegionTeleport plugin;
+
+	@Inject
+	public RegionTeleportAutoTabCompleter(RegionTeleport plugin) {
+		this.plugin = plugin;
 	}
 
 	@Override
@@ -26,52 +31,55 @@ public class RegionTeleportAutoTabCompleter extends PluginReceiver implements Ta
 		if(sender instanceof Player) {
 			Player player = (Player) sender;
 			ArrayList<String> options = new ArrayList<>();
+			ArrayList<String> commands = new ArrayList<>();
 			if (command.getName().equalsIgnoreCase("regiontp")) {
 				if (args.length == 1) {
-					options.add("tp");
-					options.add("setspawn");
-					options.add("delspawn");
-					options.add("list");
-					options.add("help");
+					commands.add("teleport");
+					commands.add("setspawn");
+					commands.add("delspawn");
+					commands.add("list");
+					commands.add("help");
+					StringUtil.copyPartialMatches(args[0], commands, options);
 				} else if (args.length == 2) {
 					switch (args[0].toLowerCase()) {
 						case "tp":
+						case "teleport":
 							RegionManager rm = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(player.getWorld()));
 							Map allRegions = rm.getRegions();
-							for (Object region : allRegions.entrySet()) {
-								options.add((String) region);
+							for (Object region : allRegions.keySet()) {
+								commands.add((String) region);
 							}
 							break;
-						case "setspawn":
-							options.add("<name>");
-							break;
 						case "delspawn":
-							File spawnloc = new File(regionteleport.getDataFolder() + File.separator + "spawnlocations.yml");
+							File spawnloc = new File(this.plugin.getDataFolder() + File.separator + "spawnlocations.yml");
 							YamlConfiguration spawnConf = YamlConfiguration.loadConfiguration(spawnloc);
 							for (String spawn : spawnConf.getKeys(false)) {
-								options.add(spawn);
+								commands.add(spawn);
 							}
 							break;
 					}
-
+					StringUtil.copyPartialMatches(args[0], commands, options);
 				} else if(args.length == 3) {
 					switch (args[0].toLowerCase()) {
 						case "tp":
-							File spawnloc = new File(regionteleport.getDataFolder() + File.separator + "spawnlocations.yml");
+							File spawnloc = new File(this.plugin.getDataFolder() + File.separator + "spawnlocations.yml");
 							YamlConfiguration spawnConf = YamlConfiguration.loadConfiguration(spawnloc);
 							for (String spawn : spawnConf.getKeys(false)) {
-								options.add(spawn);
+								commands.add(spawn);
 							}
 							break;
 					}
+					StringUtil.copyPartialMatches(args[0], commands, options);
 				} else if(args.length == 4) {
 					switch (args[0].toLowerCase()) {
 						case "tp":
-								options.add("-s");
+							commands.add("-s");
 							break;
 					}
+					StringUtil.copyPartialMatches(args[0], commands, options);
 				}
 			}
+			Collections.sort(options);
 			return options;
 		}
 		return null;
