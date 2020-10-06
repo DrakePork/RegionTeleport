@@ -13,10 +13,7 @@ import org.bukkit.util.StringUtil;
 import src.com.drakepork.regionteleport.RegionTeleport;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RegionTeleportAutoTabCompleter implements TabCompleter {
 	private RegionTeleport plugin;
@@ -46,8 +43,9 @@ public class RegionTeleportAutoTabCompleter implements TabCompleter {
 						case "teleport":
 							RegionManager rm = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(player.getWorld()));
 							Map allRegions = rm.getRegions();
-							for (Object region : allRegions.keySet()) {
-								commands.add((String) region);
+							Set<String> keys = allRegions.keySet();
+							for (String region : keys) {
+								commands.add(region);
 							}
 							break;
 						case "delspawn":
@@ -58,10 +56,11 @@ public class RegionTeleportAutoTabCompleter implements TabCompleter {
 							}
 							break;
 					}
-					StringUtil.copyPartialMatches(args[0], commands, options);
+					StringUtil.copyPartialMatches(args[1], commands, options);
 				} else if(args.length == 3) {
 					switch (args[0].toLowerCase()) {
 						case "tp":
+						case "teleport":
 							File spawnloc = new File(this.plugin.getDataFolder() + File.separator + "spawnlocations.yml");
 							YamlConfiguration spawnConf = YamlConfiguration.loadConfiguration(spawnloc);
 							for (String spawn : spawnConf.getKeys(false)) {
@@ -69,14 +68,14 @@ public class RegionTeleportAutoTabCompleter implements TabCompleter {
 							}
 							break;
 					}
-					StringUtil.copyPartialMatches(args[0], commands, options);
+					StringUtil.copyPartialMatches(args[2], commands, options);
 				} else if(args.length == 4) {
 					switch (args[0].toLowerCase()) {
 						case "tp":
 							commands.add("-s");
 							break;
 					}
-					StringUtil.copyPartialMatches(args[0], commands, options);
+					StringUtil.copyPartialMatches(args[3], commands, options);
 				}
 			}
 			Collections.sort(options);

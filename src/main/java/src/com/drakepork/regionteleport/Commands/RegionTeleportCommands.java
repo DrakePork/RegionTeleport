@@ -35,7 +35,7 @@ public class RegionTeleportCommands implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if(sender instanceof Player) {
-			File lang = new File(this.plugin.getDataFolder() + File.separator + "lang.yml");
+			File lang = new File(this.plugin.getDataFolder() + File.separator + plugin.getConfig().getString("lang-file"));
 			FileConfiguration langConf = YamlConfiguration.loadConfiguration(lang);
 			List<String> cmdList = (List<String>) langConf.getList("global.help");
 			String noPerm = this.plugin.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', langConf.getString("global.no-perm")));
@@ -44,7 +44,7 @@ public class RegionTeleportCommands implements CommandExecutor {
 			File spawnloc = new File(this.plugin.getDataFolder() + File.separator + "spawnlocations.yml");
 			YamlConfiguration spawnConf = YamlConfiguration.loadConfiguration(spawnloc);
 
-			String commandHelp = null;
+			String commandHelp = "";
 			for(int i = 0; i < cmdList.size(); i++) {
 				commandHelp += this.plugin.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', cmdList.get(i)));
 
@@ -229,6 +229,9 @@ public class RegionTeleportCommands implements CommandExecutor {
 						player.sendMessage(noPerm);
 					}
 					break;
+				default:
+					player.sendMessage(commandHelp);
+					return true;
 			}
 
 		} else {

@@ -15,6 +15,7 @@ public class ConfigCreator {
 
 	public void init() {
 		FileConfiguration config = this.plugin.getConfig();
+		config.addDefault("lang-file", "en.yml");
 		config.options().copyDefaults(true);
 		this.plugin.saveConfig();
 	}
