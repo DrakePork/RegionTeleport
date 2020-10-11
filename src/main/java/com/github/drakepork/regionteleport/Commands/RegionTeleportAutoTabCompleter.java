@@ -1,4 +1,4 @@
-package src.com.drakepork.regionteleport.Commands;
+package com.github.drakepork.regionteleport.Commands;
 
 import com.google.inject.Inject;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
@@ -10,7 +10,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
-import src.com.drakepork.regionteleport.RegionTeleport;
+import com.github.drakepork.regionteleport.RegionTeleport;
 
 import java.io.File;
 import java.util.*;

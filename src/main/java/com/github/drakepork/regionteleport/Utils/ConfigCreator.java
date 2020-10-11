@@ -1,8 +1,8 @@
-package src.com.drakepork.regionteleport.Utils;
+package com.github.drakepork.regionteleport.Utils;
 
 import com.google.inject.Inject;
 import org.bukkit.configuration.file.FileConfiguration;
-import src.com.drakepork.regionteleport.RegionTeleport;
+import com.github.drakepork.regionteleport.RegionTeleport;
 
 
 public class ConfigCreator {

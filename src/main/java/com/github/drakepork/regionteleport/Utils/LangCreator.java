@@ -1,9 +1,9 @@
-package src.com.drakepork.regionteleport.Utils;
+package com.github.drakepork.regionteleport.Utils;
 
 import com.google.inject.Inject;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import src.com.drakepork.regionteleport.RegionTeleport;
+import com.github.drakepork.regionteleport.RegionTeleport;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +21,9 @@ public class LangCreator {
 		File lang = new File(this.plugin.getDataFolder() + File.separator + plugin.getConfig().getString("lang-file"));
 		try {
 			FileConfiguration langConf = YamlConfiguration.loadConfiguration(lang);
+
 			// Global Messages
+
 			langConf.addDefault("global.plugin-prefix", "&f[&aRegionTeleport&f] ");
 			ArrayList cmdHelp = new ArrayList();
 			cmdHelp.add("&a-----=== &9RegionTP &a===-----");

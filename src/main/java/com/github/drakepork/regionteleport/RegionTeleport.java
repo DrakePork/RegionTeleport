@@ -1,15 +1,12 @@
-package src.com.drakepork.regionteleport;
+package com.github.drakepork.regionteleport;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import src.com.drakepork.regionteleport.Commands.RegionTeleportAutoTabCompleter;
-import src.com.drakepork.regionteleport.Commands.RegionTeleportCommands;
+import com.github.drakepork.regionteleport.Commands.*;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import src.com.drakepork.regionteleport.Utils.ConfigCreator;
-import src.com.drakepork.regionteleport.Utils.LangCreator;
-import src.com.drakepork.regionteleport.Utils.PluginReceiver;
+import com.github.drakepork.regionteleport.Utils.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,21 +48,17 @@ public final class RegionTeleport extends JavaPlugin {
 
         this.getCommand("regiontp").setExecutor(this.commands);
         this.getCommand("regiontp").setTabCompleter(this.tabCompleter);
-        getLogger().info("Enabled RegionTeleport - version " + getDescription().getVersion());
+        getLogger().info("Enabled RegionTeleport - v" + getDescription().getVersion());
     }
 
     @Override
     public void onDisable() {
-        getLogger().info("Disabled RegionTeleport - version " + getDescription().getVersion());
+        getLogger().info("Disabled RegionTeleport - v" + getDescription().getVersion());
         instance = null;
     }
 
-    public String getPrefix() {
-        return translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', config.getString("plugin-prefix")));
-    }
-
     public String translateHexColorCodes(String message) {
-        final Pattern hexPattern = Pattern.compile("#" + "([A-Fa-f0-9]{6})");
+        final Pattern hexPattern = Pattern.compile("\\{" + "([A-Fa-f0-9]{6})" + "\\}");
         Matcher matcher = hexPattern.matcher(message);
         StringBuffer buffer = new StringBuffer(message.length() + 4 * 8);
         while (matcher.find()) {
