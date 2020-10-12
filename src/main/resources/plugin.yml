@@ -1,7 +1,6 @@
 name: RegionTeleport
 version: ${project.version}
 main: com.github.drakepork.regionteleport.RegionTeleport
-api-version: 1.16
 depend: [WorldGuard]
 author: DrakePork
 description: A plugin to teleport anyone inside a worldguard region to a specified point.
