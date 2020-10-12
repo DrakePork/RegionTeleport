@@ -35,7 +35,8 @@ public class RegionTeleportCommands implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if(sender instanceof Player) {
-			File lang = new File(this.plugin.getDataFolder() + File.separator + plugin.getConfig().getString("lang-file"));
+			File lang = new File(this.plugin.getDataFolder() + File.separator
+					+ "lang" + File.separator + plugin.getConfig().getString("lang-file"));
 			FileConfiguration langConf = YamlConfiguration.loadConfiguration(lang);
 			List<String> cmdList = (List<String>) langConf.getList("global.help");
 			String noPerm = this.plugin.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', langConf.getString("global.no-perm")));

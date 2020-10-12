@@ -18,7 +18,8 @@ public class LangCreator {
 	}
 
 	public void init() {
-		File lang = new File(this.plugin.getDataFolder() + File.separator + plugin.getConfig().getString("lang-file"));
+		File lang = new File(this.plugin.getDataFolder() + File.separator
+				+ "lang" + File.separator + plugin.getConfig().getString("lang-file"));
 		try {
 			FileConfiguration langConf = YamlConfiguration.loadConfiguration(lang);
 
