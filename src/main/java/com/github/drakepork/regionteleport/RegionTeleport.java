@@ -3,8 +3,8 @@ package com.github.drakepork.regionteleport;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.github.drakepork.regionteleport.Commands.*;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import com.github.drakepork.regionteleport.Utils.*;
 
@@ -15,13 +15,6 @@ import java.util.regex.Pattern;
 
 
 public final class RegionTeleport extends JavaPlugin {
-    FileConfiguration config = this.getConfig();
-    private static RegionTeleport instance;
-
-    public static RegionTeleport getInstance() {
-        return instance;
-    }
-
     @Inject private LangCreator lang;
     @Inject private ConfigCreator ConfigCreator;
     @Inject private RegionTeleportCommands commands;
@@ -33,9 +26,11 @@ public final class RegionTeleport extends JavaPlugin {
         Injector injector = module.createInjector();
         injector.injectMembers(this);
 
-        instance = this;
         this.ConfigCreator.init();
         this.lang.init();
+        
+        int pluginId = 9090;
+        Metrics metrics = new Metrics(this, pluginId);
 
         File spawnloc = new File(this.getDataFolder() + File.separator + "spawnlocations.yml");
         if(!spawnloc.exists()) {
@@ -54,11 +49,10 @@ public final class RegionTeleport extends JavaPlugin {
     @Override
     public void onDisable() {
         getLogger().info("Disabled RegionTeleport - v" + getDescription().getVersion());
-        instance = null;
     }
 
     public String translateHexColorCodes(String message) {
-        final Pattern hexPattern = Pattern.compile("\\{" + "([A-Fa-f0-9]{6})" + "\\}");
+        final Pattern hexPattern = Pattern.compile("\\{#" + "([A-Fa-f0-9]{6})" + "\\}");
         Matcher matcher = hexPattern.matcher(message);
         StringBuffer buffer = new StringBuffer(message.length() + 4 * 8);
         while (matcher.find()) {

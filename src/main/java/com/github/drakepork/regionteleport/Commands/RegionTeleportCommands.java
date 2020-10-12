@@ -142,7 +142,7 @@ public class RegionTeleportCommands implements CommandExecutor {
 					break;
 				case "spawnlist":
 					if(player.hasPermission("regionteleport.command.spawnlist")) {
-						if (args.length > 2) {
+						if (args.length > 1) {
 							player.sendMessage(this.plugin.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', prefix + langConf.getString("spawn.wrong-usage-spawnlist"))));
 							return true;
 						}
