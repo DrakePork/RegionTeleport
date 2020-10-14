@@ -44,8 +44,12 @@ public class RegionTeleportAutoTabCompleter implements TabCompleter {
 							RegionManager rm = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(player.getWorld()));
 							Map allRegions = rm.getRegions();
 							Set<String> keys = allRegions.keySet();
-							for (String region : keys) {
-								commands.add(region);
+							if(!allRegions.isEmpty()) {
+								for (String region : keys) {
+									commands.add(region);
+								}
+							} else {
+								commands.add("__global__");
 							}
 							break;
 						case "delspawn":

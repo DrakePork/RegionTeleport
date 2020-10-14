@@ -55,6 +55,20 @@ public class LangCreator {
 			langConf.addDefault("teleport.wrong-usage", "&cIncorrect Usage! /regiontp tp <region> <spawn> (-s)");
 			langConf.addDefault("teleport.successful-teleport", "&aSent &e[amount] &aplayer(s) from region &2[region] &ato spawnlocation &2[name]&a!");
 			langConf.addDefault("teleport.no-such-region", "&cNo region with name &7[name] &cexists in this world!");
+
+			// Console Specific Messages
+			langConf.addDefault("console.wrong-usage-setspawn", "&cIncorrect usage! /regiontp setspawn <name> <x> <y> <z> <world>");
+			langConf.addDefault("console.no-such-world", "&cNo world with name &7[name] &cexists!");
+			langConf.addDefault("console.wrong-usage-teleport", "&cIncorrect Usage! /regiontp tp <world> <region> <spawn> (-s)");
+			ArrayList consoleHelp = new ArrayList();
+			consoleHelp.add("&a-----=== &9RegionTeleport &a===-----");
+			consoleHelp.add("&2/regiontp help &f- &aShows all commands");
+			consoleHelp.add("&2/regiontp teleport/tp &f<region> <spawn> <world> (-s) &f- &aTeleports all players within the region to the specified location");
+			consoleHelp.add("&2/regiontp setspawn &f<name> <x> <y> <z> <world> &f- &aCreates a spawn location");
+			consoleHelp.add("&2/regiontp delspawn &f<name> &f- &aDeletes a spawn location");
+			consoleHelp.add("&2/regiontp spawnlist &f- &aLists all spawn Locations");
+			langConf.addDefault("console.help", consoleHelp);
+
 			langConf.options().copyDefaults(true);
 			langConf.save(lang);
 		} catch (IOException e) {

@@ -10,7 +10,6 @@ commands:
     usage: /<command>
     aliases: [regionteleport]
     permission: regionteleport.help
-    permission-message: §4Error:§c You do not have permission to execute this command...
 permissions:
   regionteleport.command.*:
     description: Gives access to all regiontp commands
