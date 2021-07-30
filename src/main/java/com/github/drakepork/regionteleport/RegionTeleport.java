@@ -10,6 +10,7 @@ import com.github.drakepork.regionteleport.Utils.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,8 +42,8 @@ public final class RegionTeleport extends JavaPlugin {
             }
         }
 
-        this.getCommand("regiontp").setExecutor(this.commands);
-        this.getCommand("regiontp").setTabCompleter(this.tabCompleter);
+        Objects.requireNonNull(this.getCommand("regiontp")).setExecutor(this.commands);
+        Objects.requireNonNull(this.getCommand("regiontp")).setTabCompleter(this.tabCompleter);
         getLogger().info("Enabled RegionTeleport - v" + getDescription().getVersion());
     }
 
@@ -65,5 +66,4 @@ public final class RegionTeleport extends JavaPlugin {
         }
         return matcher.appendTail(buffer).toString();
     }
-
 }
