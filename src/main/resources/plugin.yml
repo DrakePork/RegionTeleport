@@ -2,6 +2,7 @@ name: RegionTeleport
 version: ${project.version}
 main: com.github.drakepork.regionteleport.RegionTeleport
 depend: [WorldGuard]
+softdepend: [CMI, Essentials, CMILib]
 author: DrakePork
 description: A plugin to teleport anyone inside a worldguard region to a specified point.
 commands:
@@ -27,6 +28,8 @@ permissions:
     description: Gives access to /regiontp delspawn <name>
   regionteleport.command.spawnlist:
     description: Gives access to /regiontp spawnlist
+  regionteleport.command.reload:
+    description: Gives access to /regiontp reload
   regionteleport.command.teleport:
     description: Gives access to /regiontp tp
   regionteleport.teleport.bypass:

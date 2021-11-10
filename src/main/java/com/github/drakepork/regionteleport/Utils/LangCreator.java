@@ -33,8 +33,10 @@ public class LangCreator {
 			cmdHelp.add("&2/regiontp setspawn &f<name> &f- &aCreates a spawn location");
 			cmdHelp.add("&2/regiontp delspawn &f<name> &f- &aDeletes a spawn location");
 			cmdHelp.add("&2/regiontp spawnlist &f- &aLists all spawn Locations");
+			cmdHelp.add("&2/regiontp reload &f- &aReloads the plugin");
 			langConf.addDefault("global.help", cmdHelp);
 			langConf.addDefault("global.no-perm", "&4Error: &cYou do not have permission to execute this command...");
+			langConf.addDefault("global.reload", "&aPlugin has been reloaded!");
 
 			// Spawn Related Messages
 
@@ -50,11 +52,20 @@ public class LangCreator {
 			langConf.addDefault("spawn.list-header", "&7--=== &2Spawn Locations &7===--");
 			langConf.addDefault("spawn.list-spawn", "&f- &a[name]");
 
+
+			// Addon Related Messages
+
+			langConf.addDefault("spawn.no-such-cmi", "&cNo CMI Warp with name &7[name] &cexists!");
+			langConf.addDefault("spawn.no-such-essentials", "&cNo Essentials Warp with name &7[name] &cexists!");
+			langConf.addDefault("addon.no-such-addon", "&cNo addon with name &7[name] &cexists!");
+			langConf.addDefault("addon.disabled", "&cThis addon is not enabled!");
+
 			// Teleport Related Messages
 
 			langConf.addDefault("teleport.wrong-usage", "&cIncorrect Usage! /regiontp tp <region> <spawn> (-s)");
 			langConf.addDefault("teleport.successful-teleport", "&aSent &e[amount] &aplayer(s) from region &2[region] &ato spawnlocation &2[name]&a!");
 			langConf.addDefault("teleport.no-such-region", "&cNo region with name &7[name] &cexists in this world!");
+
 
 			// Console Specific Messages
 			langConf.addDefault("console.wrong-usage-setspawn", "&cIncorrect usage! /regiontp setspawn <name> <x> <y> <z> <world>");

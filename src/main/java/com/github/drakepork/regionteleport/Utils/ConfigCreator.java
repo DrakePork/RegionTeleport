@@ -14,9 +14,11 @@ public class ConfigCreator {
 	}
 
 	public void init() {
-		FileConfiguration config = this.plugin.getConfig();
+		FileConfiguration config = plugin.getConfig();
 		config.addDefault("lang-file", "en.yml");
+		config.addDefault("addons.cmi", false);
+		config.addDefault("addons.essentials", false);
 		config.options().copyDefaults(true);
-		this.plugin.saveConfig();
+		plugin.saveConfig();
 	}
 }
