@@ -78,6 +78,7 @@ public class LangCreator {
 			consoleHelp.add("&2/regiontp setspawn &f<name> <x> <y> <z> <world> &f- &aCreates a spawn location");
 			consoleHelp.add("&2/regiontp delspawn &f<name> &f- &aDeletes a spawn location");
 			consoleHelp.add("&2/regiontp spawnlist &f- &aLists all spawn Locations");
+			consoleHelp.add("&2/regiontp reload &f- &aReloads the plugin");
 			langConf.addDefault("console.help", consoleHelp);
 
 			langConf.options().copyDefaults(true);

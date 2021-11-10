@@ -475,8 +475,118 @@ public class RegionTeleportCommands implements CommandExecutor {
 							tellConsole(ColourMessage(prefix + langConf.getString("console.wrong-usage-teleport")));
 							return true;
 						}
+					String name = args[2];
+					if(args[2].contains(":")) {
+						World cWorld = Bukkit.getWorld(args[3]);
+						RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+						RegionManager regions = container.get(BukkitAdapter.adapt(cWorld));
+						String[] teleportLoc = args[2].split(":");
+						name = teleportLoc[1];
+						if (regions.getRegion(args[1]) != null || args[1].equalsIgnoreCase("__global__")) {
+							int teleported = 0;
+							switch (teleportLoc[0].toLowerCase()) {
+								case "cmi":
+									if(plugin.cmiAddon == null) {
+										tellConsole(ColourMessage(langConf.getString("addon.disabled").replaceAll("\\[name\\]", teleportLoc[0])));
+										return true;
+									}
+									break;
+								case "essentials":
+								case "ess":
+									if(plugin.essAddon == null) {
+										tellConsole(ColourMessage(langConf.getString("addon.disabled").replaceAll("\\[name\\]", teleportLoc[0])));
+										return true;
+									}
+									break;
+								default:
+									tellConsole(ColourMessage(langConf.getString("teleport.no-such-addon").replaceAll("\\[name\\]", teleportLoc[0])));
+									return true;
+							}
+							for (Player pOnline : Bukkit.getServer().getOnlinePlayers()) {
+								if (!pOnline.hasPermission("regionteleport.teleport.bypass")) {
+									switch (teleportLoc[0].toLowerCase()) {
+										case "cmi":
+											if(args[1].equalsIgnoreCase("__global__") && pOnline.getWorld() == cWorld) {
+												if (plugin.cmiAddon.warpLoc(teleportLoc) != null) {
+													Location nLoc = plugin.cmiAddon.warpLoc(teleportLoc);
+													pOnline.teleport(nLoc);
+													teleported++;
+												} else {
+													tellConsole(ColourMessage(prefix + langConf.getString("spawn.no-such-cmi").replaceAll("\\[name\\]", name)));
+													return true;
+												}
+											} else {
+												if(plugin.cmiAddon.warpLoc(teleportLoc) != null) {
+													Location loc = pOnline.getLocation();
+													BlockVector3 v = BlockVector3.at(loc.getX(), loc.getY(), loc.getZ());
+													World world = pOnline.getWorld();
+													RegionManager rm = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(world));
+													ApplicableRegionSet set = rm.getApplicableRegions(v);
+													for (ProtectedRegion r : set) {
+														if (r.getId().equalsIgnoreCase(args[1])) {
+															Location nLoc = plugin.cmiAddon.warpLoc(teleportLoc);
+															pOnline.teleport(nLoc);
+															teleported++;
+															break;
+														}
+													}
+												} else {
+													tellConsole(ColourMessage(prefix + langConf.getString("spawn.no-such-cmi").replaceAll("\\[name\\]", name)));
+													return true;
+												}
+											}
+											break;
+										case "essentials":
+										case "ess":
+											if(args[1].equalsIgnoreCase("__global__") && pOnline.getWorld() == cWorld) {
+												if (plugin.essAddon.warpLoc(teleportLoc) != null) {
+													Location nLoc = plugin.essAddon.warpLoc(teleportLoc);
+													pOnline.teleport(nLoc);
+													teleported++;
+												} else {
+													tellConsole(ColourMessage(prefix + langConf.getString("spawn.no-such-essentials").replaceAll("\\[name\\]", name)));
+													return true;
+												}
+											} else {
+												if(plugin.essAddon.warpLoc(teleportLoc) != null) {
+													Location loc = pOnline.getLocation();
+													BlockVector3 v = BlockVector3.at(loc.getX(), loc.getY(), loc.getZ());
+													World world = pOnline.getWorld();
+													RegionManager rm = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(world));
+													ApplicableRegionSet set = rm.getApplicableRegions(v);
+													for (ProtectedRegion r : set) {
+														if (r.getId().equalsIgnoreCase(args[1])) {
+															Location nLoc = plugin.essAddon.warpLoc(teleportLoc);
+															pOnline.teleport(nLoc);
+															teleported++;
+															break;
+														}
+													}
+												} else {
+													tellConsole(ColourMessage(prefix + langConf.getString("spawn.no-such-essentials").replaceAll("\\[name\\]", name)));
+													return true;
+												}
+											}
+											break;
+									}
 
-						if(spawnConf.contains(args[2])) {
+								}
+							}
+							if(args.length == 5) {
+								if (!args[4].equalsIgnoreCase(("-s"))) {
+									tellConsole(ColourMessage(prefix + langConf.getString("teleport.wrong-usage")));
+								}
+							} else {
+								String tpSuccess = langConf.getString("teleport.successful-teleport").replaceAll("\\[name\\]", name);
+								tpSuccess = tpSuccess.replaceAll("\\[region\\]", args[1]);
+								tpSuccess = tpSuccess.replaceAll("\\[amount\\]", String.valueOf(teleported));
+								tellConsole(ColourMessage(prefix + tpSuccess));
+							}
+						} else {
+							String noRegion = langConf.getString("teleport.no-such-region").replaceAll("\\[name\\]", name);
+							tellConsole(ColourMessage(prefix + noRegion));
+						}
+					} else if(spawnConf.contains(args[2])) {
 							World cWorld = Bukkit.getWorld(args[3]);
 							if(cWorld != null) {
 								RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
@@ -517,7 +627,7 @@ public class RegionTeleportCommands implements CommandExecutor {
 											tellConsole(ColourMessage(prefix + langConf.getString("teleport.wrong-usage")));
 										}
 									} else {
-										String tpSuccess = langConf.getString("teleport.successful-teleport").replaceAll("\\[name\\]", args[2]);
+										String tpSuccess = langConf.getString("teleport.successful-teleport").replaceAll("\\[name\\]", name);
 										tpSuccess = tpSuccess.replaceAll("\\[region\\]", args[1]);
 										tpSuccess = tpSuccess.replaceAll("\\[amount\\]", String.valueOf(teleported));
 										tellConsole(ColourMessage(prefix + tpSuccess));
@@ -531,10 +641,14 @@ public class RegionTeleportCommands implements CommandExecutor {
 								tellConsole(ColourMessage(prefix + noSuchWorld));
 							}
 						} else {
-							String noSpawn = langConf.getString("spawn.no-such-spawn").replaceAll("\\[name\\]", args[2]);
+							String noSpawn = langConf.getString("spawn.no-such-spawn").replaceAll("\\[name\\]", name);
 							tellConsole(ColourMessage(prefix + noSpawn));
 						}
 
+					break;
+				case "reload":
+					plugin.onReload();
+					tellConsole(ColourMessage(langConf.getString("global.reload")));
 					break;
 				default:
 					tellConsole(commandHelp);

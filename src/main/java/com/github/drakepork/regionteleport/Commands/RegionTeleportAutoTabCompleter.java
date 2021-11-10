@@ -36,6 +36,7 @@ public class RegionTeleportAutoTabCompleter implements TabCompleter {
 					commands.add("delspawn");
 					commands.add("list");
 					commands.add("help");
+					commands.add("reload");
 					StringUtil.copyPartialMatches(args[0], commands, options);
 				} else if (args.length == 2) {
 					switch (args[0].toLowerCase()) {
