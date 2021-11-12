@@ -74,12 +74,14 @@ public final class RegionTeleport extends JavaPlugin {
                 e.printStackTrace();
             }
         }
-        if(Bukkit.getPluginManager().isPluginEnabled("CMI") && this.getConfig().getBoolean("addons.cmi"))
+        if(Bukkit.getPluginManager().isPluginEnabled("CMI") && this.getConfig().getBoolean("addons.cmi")) {
             getLogger().info("Enabled CMI Addon");
             cmiAddon = new CMIAddon();
-        if(Bukkit.getPluginManager().isPluginEnabled("Essentials") && this.getConfig().getBoolean("addons.essentials"))
+        }
+        if(Bukkit.getPluginManager().isPluginEnabled("Essentials") && this.getConfig().getBoolean("addons.essentials")) {
             getLogger().info("Enabled Essentials Addon");
             essAddon = new EssentialsAddon();
+        }
         getLogger().info("Reloaded RegionTeleport - v" + getDescription().getVersion());
     }
 
