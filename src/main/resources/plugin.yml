@@ -1,6 +1,7 @@
 name: RegionTeleport
 version: ${project.version}
 main: com.github.drakepork.regionteleport.RegionTeleport
+api-version: 1.13
 depend: [WorldGuard]
 softdepend: [CMI, Essentials, CMILib]
 author: DrakePork
