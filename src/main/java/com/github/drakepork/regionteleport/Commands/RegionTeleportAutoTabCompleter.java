@@ -1,6 +1,5 @@
 package com.github.drakepork.regionteleport.Commands;
 
-import com.google.inject.Inject;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.managers.RegionManager;
@@ -18,7 +17,6 @@ import java.util.*;
 public class RegionTeleportAutoTabCompleter implements TabCompleter {
 	private RegionTeleport plugin;
 
-	@Inject
 	public RegionTeleportAutoTabCompleter(RegionTeleport plugin) {
 		this.plugin = plugin;
 	}

@@ -1,6 +1,5 @@
 package com.github.drakepork.regionteleport.Utils;
 
-import com.google.inject.Inject;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import com.github.drakepork.regionteleport.RegionTeleport;
@@ -12,7 +11,6 @@ import java.util.ArrayList;
 public class LangCreator {
 	private RegionTeleport plugin;
 
-	@Inject
 	public LangCreator(RegionTeleport plugin) {
 		this.plugin = plugin;
 	}

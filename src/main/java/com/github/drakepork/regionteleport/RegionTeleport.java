@@ -2,8 +2,6 @@ package com.github.drakepork.regionteleport;
 
 import com.github.drakepork.regionteleport.Addons.CMIAddon;
 import com.github.drakepork.regionteleport.Addons.EssentialsAddon;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.github.drakepork.regionteleport.Commands.*;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
@@ -19,23 +17,13 @@ import java.util.regex.Pattern;
 
 
 public final class RegionTeleport extends JavaPlugin {
-    @Inject private LangCreator lang;
-    @Inject private ConfigCreator ConfigCreator;
-    @Inject private RegionTeleportCommands commands;
-    @Inject private RegionTeleportAutoTabCompleter tabCompleter;
-
-
-
     public CMIAddon cmiAddon = null;
     public EssentialsAddon essAddon = null;
 
     @Override
     public void onEnable() {
-        PluginReceiver module = new PluginReceiver(this);
-        Injector injector = module.createInjector();
-        injector.injectMembers(this);
-        this.ConfigCreator.init();
-        this.lang.init();
+        new ConfigCreator(this).init();
+        new LangCreator(this).init();
         
         int pluginId = 9090;
         Metrics metrics = new Metrics(this, pluginId);
@@ -57,15 +45,15 @@ public final class RegionTeleport extends JavaPlugin {
             essAddon = new EssentialsAddon();
         }
 
-        Objects.requireNonNull(this.getCommand("regiontp")).setExecutor(this.commands);
-        Objects.requireNonNull(this.getCommand("regiontp")).setTabCompleter(this.tabCompleter);
+        Objects.requireNonNull(this.getCommand("regiontp")).setExecutor(new RegionTeleportCommands(this));
+        Objects.requireNonNull(this.getCommand("regiontp")).setTabCompleter(new RegionTeleportAutoTabCompleter(this));
         getLogger().info("Enabled RegionTeleport - v" + getDescription().getVersion());
     }
 
     public void onReload() {
         this.reloadConfig();
-        this.ConfigCreator.init();
-        this.lang.init();
+        new ConfigCreator(this).init();
+        new LangCreator(this).init();
         File spawnloc = new File(this.getDataFolder() + File.separator + "spawnlocations.yml");
         if(!spawnloc.exists()) {
             try {

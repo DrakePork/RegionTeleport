@@ -4,7 +4,6 @@ package com.github.drakepork.regionteleport.Commands;
 import com.Zrips.CMI.CMI;
 import com.github.drakepork.regionteleport.Addons.CMIAddon;
 import com.github.drakepork.regionteleport.Addons.EssentialsAddon;
-import com.google.inject.Inject;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.WorldGuard;
@@ -31,7 +30,6 @@ import java.util.List;
 public class RegionTeleportCommands implements CommandExecutor {
 	private RegionTeleport plugin;
 
-	@Inject
 	public RegionTeleportCommands(RegionTeleport plugin) {
 		this.plugin = plugin;
 	}
