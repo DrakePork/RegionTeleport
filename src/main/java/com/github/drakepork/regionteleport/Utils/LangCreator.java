@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class LangCreator {
-	private RegionTeleport plugin;
+	private final RegionTeleport plugin;
 
 	public LangCreator(RegionTeleport plugin) {
 		this.plugin = plugin;
@@ -24,7 +24,7 @@ public class LangCreator {
 			// Global Messages
 
 			langConf.addDefault("global.plugin-prefix", "&f[&aRegionTeleport&f] ");
-			ArrayList cmdHelp = new ArrayList();
+			ArrayList<String> cmdHelp = new ArrayList<>();
 			cmdHelp.add("&a-----=== &9RegionTeleport &a===-----");
 			cmdHelp.add("&2/regiontp help &f- &aShows all commands");
 			cmdHelp.add("&2/regiontp teleport/tp &f<region> <spawn> (-s) &f- &aTeleports all players within the region to the specified location");
@@ -69,7 +69,7 @@ public class LangCreator {
 			langConf.addDefault("console.wrong-usage-setspawn", "&cIncorrect usage! /regiontp setspawn <name> <x> <y> <z> <world>");
 			langConf.addDefault("console.no-such-world", "&cNo world with name &7[name] &cexists!");
 			langConf.addDefault("console.wrong-usage-teleport", "&cIncorrect Usage! /regiontp tp <world> <region> <spawn> (-s)");
-			ArrayList consoleHelp = new ArrayList();
+			ArrayList<String> consoleHelp = new ArrayList<>();
 			consoleHelp.add("&a-----=== &9RegionTeleport &a===-----");
 			consoleHelp.add("&2/regiontp help &f- &aShows all commands");
 			consoleHelp.add("&2/regiontp teleport/tp &f<region> <spawn> <world> (-s) &f- &aTeleports all players within the region to the specified location");

@@ -5,7 +5,7 @@ import com.github.drakepork.regionteleport.RegionTeleport;
 
 
 public class ConfigCreator {
-	private RegionTeleport plugin;
+	private final RegionTeleport plugin;
 
 	public ConfigCreator(RegionTeleport plugin) {
 		this.plugin = plugin;

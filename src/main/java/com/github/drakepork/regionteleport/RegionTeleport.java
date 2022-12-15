@@ -45,6 +45,12 @@ public final class RegionTeleport extends JavaPlugin {
             essAddon = new EssentialsAddon();
         }
 
+        if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new PlaceholderCreator(this).register();
+            getLogger().info("Enabled PlaceholderAPI Placeholders");
+        }
+
+
         Objects.requireNonNull(this.getCommand("regiontp")).setExecutor(new RegionTeleportCommands(this));
         Objects.requireNonNull(this.getCommand("regiontp")).setTabCompleter(new RegionTeleportAutoTabCompleter(this));
         getLogger().info("Enabled RegionTeleport - v" + getDescription().getVersion());

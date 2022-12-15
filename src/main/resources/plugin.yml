@@ -3,7 +3,7 @@ version: ${project.version}
 main: com.github.drakepork.regionteleport.RegionTeleport
 api-version: 1.13
 depend: [WorldGuard]
-softdepend: [CMI, Essentials, CMILib]
+softdepend: [CMI, Essentials, CMILib, PlaceholderAPI]
 author: DrakePork
 description: A plugin to teleport anyone inside a worldguard region to a specified point.
 commands:

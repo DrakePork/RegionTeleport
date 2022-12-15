@@ -3,6 +3,7 @@ package com.github.drakepork.regionteleport.Commands;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -10,19 +11,20 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import com.github.drakepork.regionteleport.RegionTeleport;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.*;
 
 public class RegionTeleportAutoTabCompleter implements TabCompleter {
-	private RegionTeleport plugin;
+	private final RegionTeleport plugin;
 
 	public RegionTeleportAutoTabCompleter(RegionTeleport plugin) {
 		this.plugin = plugin;
 	}
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+	public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
 		if(sender instanceof Player) {
 			Player player = (Player) sender;
 			ArrayList<String> options = new ArrayList<>();
@@ -41,12 +43,10 @@ public class RegionTeleportAutoTabCompleter implements TabCompleter {
 						case "tp":
 						case "teleport":
 							RegionManager rm = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(player.getWorld()));
-							Map allRegions = rm.getRegions();
+							Map<String, ProtectedRegion> allRegions = rm.getRegions();
 							Set<String> keys = allRegions.keySet();
 							if(!allRegions.isEmpty()) {
-								for (String region : keys) {
-									commands.add(region);
-								}
+								commands.addAll(keys);
 							} else {
 								commands.add("__global__");
 							}
@@ -54,9 +54,7 @@ public class RegionTeleportAutoTabCompleter implements TabCompleter {
 						case "delspawn":
 							File spawnloc = new File(this.plugin.getDataFolder() + File.separator + "spawnlocations.yml");
 							YamlConfiguration spawnConf = YamlConfiguration.loadConfiguration(spawnloc);
-							for (String spawn : spawnConf.getKeys(false)) {
-								commands.add(spawn);
-							}
+							commands.addAll(spawnConf.getKeys(false));
 							break;
 					}
 					StringUtil.copyPartialMatches(args[1], commands, options);
@@ -66,17 +64,13 @@ public class RegionTeleportAutoTabCompleter implements TabCompleter {
 						case "teleport":
 							File spawnloc = new File(this.plugin.getDataFolder() + File.separator + "spawnlocations.yml");
 							YamlConfiguration spawnConf = YamlConfiguration.loadConfiguration(spawnloc);
-							for (String spawn : spawnConf.getKeys(false)) {
-								commands.add(spawn);
-							}
+							commands.addAll(spawnConf.getKeys(false));
 							break;
 					}
 					StringUtil.copyPartialMatches(args[2], commands, options);
 				} else if(args.length == 4) {
-					switch (args[0].toLowerCase()) {
-						case "tp":
-							commands.add("-s");
-							break;
+					if ("tp".equalsIgnoreCase(args[0])) {
+						commands.add("-s");
 					}
 					StringUtil.copyPartialMatches(args[3], commands, options);
 				}

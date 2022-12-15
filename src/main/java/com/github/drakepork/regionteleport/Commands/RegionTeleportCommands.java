@@ -22,13 +22,14 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 public class RegionTeleportCommands implements CommandExecutor {
-	private RegionTeleport plugin;
+	private final RegionTeleport plugin;
 
 	public RegionTeleportCommands(RegionTeleport plugin) {
 		this.plugin = plugin;
@@ -44,7 +45,7 @@ public class RegionTeleportCommands implements CommandExecutor {
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
 		File lang = new File(plugin.getDataFolder() + File.separator
 				+ "lang" + File.separator + plugin.getConfig().getString("lang-file"));
 		FileConfiguration langConf = YamlConfiguration.loadConfiguration(lang);
