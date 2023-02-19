@@ -31,15 +31,15 @@ import java.util.List;
 public class RegionTeleportCommands implements CommandExecutor {
 	private final RegionTeleport plugin;
 
-	public RegionTeleportCommands(RegionTeleport plugin) {
+	public RegionTeleportCommands(final RegionTeleport plugin) {
 		this.plugin = plugin;
 	}
 
-	public void tellConsole(String message){
+	public void tellConsole(final String message){
 		Bukkit.getConsoleSender().sendMessage(message);
 	}
 
-	public String ColourMessage(String message){
+	public String ColourMessage(final String message){
 		message = plugin.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', message));
 		return message;
 	}
