@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class LangCreator {
 	private final RegionTeleport plugin;
 
-	public LangCreator(RegionTeleport plugin) {
+	public LangCreator(final RegionTeleport plugin) {
 		this.plugin = plugin;
 	}
 

@@ -1,6 +1,5 @@
 package com.github.drakepork.regionteleport.Addons;
 
-
 import com.Zrips.CMI.CMI;
 import org.bukkit.Location;
 

@@ -19,7 +19,7 @@ import java.util.*;
 public class RegionTeleportAutoTabCompleter implements TabCompleter {
 	private final RegionTeleport plugin;
 
-	public RegionTeleportAutoTabCompleter(RegionTeleport plugin) {
+	public RegionTeleportAutoTabCompleter(final RegionTeleport plugin) {
 		this.plugin = plugin;
 	}
 
@@ -62,9 +62,15 @@ public class RegionTeleportAutoTabCompleter implements TabCompleter {
 					switch (args[0].toLowerCase()) {
 						case "tp":
 						case "teleport":
-							File spawnloc = new File(this.plugin.getDataFolder() + File.separator + "spawnlocations.yml");
-							YamlConfiguration spawnConf = YamlConfiguration.loadConfiguration(spawnloc);
-							commands.addAll(spawnConf.getKeys(false));
+							if(args[2].startsWith("cmi:")) {
+								commands.addAll(plugin.cmiAddon.warps());
+							} else if(args[2].startsWith("ess:")) {
+								commands.addAll(plugin.cmiAddon.warps());
+							} else {
+								File spawnloc = new File(this.plugin.getDataFolder() + File.separator + "spawnlocations.yml");
+								YamlConfiguration spawnConf = YamlConfiguration.loadConfiguration(spawnloc);
+								commands.addAll(spawnConf.getKeys(false));
+							}
 							break;
 					}
 					StringUtil.copyPartialMatches(args[2], commands, options);

@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 public class PlaceholderCreator extends PlaceholderExpansion {
     private final RegionTeleport plugin;
 
-    public PlaceholderCreator(RegionTeleport plugin) {
+    public PlaceholderCreator(final RegionTeleport plugin) {
         this.plugin = plugin;
     }
 
