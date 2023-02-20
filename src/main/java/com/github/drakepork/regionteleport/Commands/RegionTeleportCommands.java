@@ -39,7 +39,7 @@ public class RegionTeleportCommands implements CommandExecutor {
 		Bukkit.getConsoleSender().sendMessage(message);
 	}
 
-	public String ColourMessage(final String message){
+	public String ColourMessage(String message){
 		message = plugin.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', message));
 		return message;
 	}
