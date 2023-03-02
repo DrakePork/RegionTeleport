@@ -53,15 +53,13 @@ public class LangCreator {
 
 			// Addon Related Messages
 
-			langConf.addDefault("spawn.no-such-cmi", "&cNo CMI Warp with name &7[name] &cexists!");
-			langConf.addDefault("spawn.no-such-essentials", "&cNo Essentials Warp with name &7[name] &cexists!");
 			langConf.addDefault("addon.no-such-addon", "&cNo addon with name &7[name] &cexists!");
 			langConf.addDefault("addon.disabled", "&cThis addon is not enabled!");
 
 			// Teleport Related Messages
 
 			langConf.addDefault("teleport.wrong-usage", "&cIncorrect Usage! /regiontp tp <region> <spawn> (-s)");
-			langConf.addDefault("teleport.successful-teleport", "&aSent &e[amount] &aplayer(s) from region &2[region] &ato spawnlocation &2[name]&a!");
+			langConf.addDefault("teleport.successful-teleport", "&aSent &e[amount] &aplayer(s) from region(s) &2[region] &ato spawnlocation(s) &2[name]&a!");
 			langConf.addDefault("teleport.no-such-region", "&cNo region with name &7[name] &cexists in this world!");
 
 

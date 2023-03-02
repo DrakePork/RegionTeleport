@@ -4,6 +4,7 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -39,6 +40,7 @@ public class RegionTeleportAutoTabCompleter implements TabCompleter {
 					commands.add("reload");
 					StringUtil.copyPartialMatches(args[0], commands, options);
 				} else if (args.length == 2) {
+					String[] splitIds = args[1].split(",");
 					switch (args[0].toLowerCase()) {
 						case "tp":
 						case "teleport":
@@ -57,15 +59,31 @@ public class RegionTeleportAutoTabCompleter implements TabCompleter {
 							commands.addAll(spawnConf.getKeys(false));
 							break;
 					}
-					StringUtil.copyPartialMatches(args[1], commands, options);
+					if(splitIds.length > 1 || args[1].endsWith(",")) {
+						List<String> spawnIds = new ArrayList<>();
+						List<String> allSpawns = new ArrayList<>();
+						if(args[1].endsWith(",")) {
+							spawnIds.addAll(commands);
+						} else {
+							StringUtil.copyPartialMatches(splitIds[splitIds.length - 1], commands, spawnIds);
+						}
+
+						for(String spawnId : spawnIds) {
+							allSpawns.add(args[1].substring(0, args[1].lastIndexOf(",")) + "," + spawnId);
+						}
+						options.addAll(allSpawns);
+					} else {
+						StringUtil.copyPartialMatches(splitIds[splitIds.length - 1], commands, options);
+					}
 				} else if(args.length == 3) {
+					String[] splitIds = args[2].split(",");
 					switch (args[0].toLowerCase()) {
 						case "tp":
 						case "teleport":
-							if(args[2].startsWith("cmi:")) {
+							if(args[2].startsWith("cmi:") && plugin.cmiAddon != null) {
 								commands.addAll(plugin.cmiAddon.warps());
-							} else if(args[2].startsWith("ess:")) {
-								commands.addAll(plugin.cmiAddon.warps());
+							} else if(args[2].startsWith("ess:") && plugin.essAddon != null) {
+								commands.addAll(plugin.essAddon.warps());
 							} else {
 								File spawnloc = new File(this.plugin.getDataFolder() + File.separator + "spawnlocations.yml");
 								YamlConfiguration spawnConf = YamlConfiguration.loadConfiguration(spawnloc);
@@ -73,7 +91,23 @@ public class RegionTeleportAutoTabCompleter implements TabCompleter {
 							}
 							break;
 					}
-					StringUtil.copyPartialMatches(args[2], commands, options);
+
+					if(splitIds.length > 1 || args[2].endsWith(",")) {
+						List<String> spawnIds = new ArrayList<>();
+						List<String> allSpawns = new ArrayList<>();
+						if(args[2].endsWith(",")) {
+							spawnIds.addAll(commands);
+						} else {
+							StringUtil.copyPartialMatches(splitIds[splitIds.length - 1], commands, spawnIds);
+						}
+
+						for(String spawnId : spawnIds) {
+							allSpawns.add(args[2].substring(0, args[2].lastIndexOf(",")) + "," + spawnId);
+						}
+						options.addAll(allSpawns);
+					} else {
+						StringUtil.copyPartialMatches(splitIds[splitIds.length - 1], commands, options);
+					}
 				} else if(args.length == 4) {
 					if ("tp".equalsIgnoreCase(args[0])) {
 						commands.add("-s");

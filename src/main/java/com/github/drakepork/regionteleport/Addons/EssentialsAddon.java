@@ -9,13 +9,18 @@ import org.bukkit.Location;
 import java.util.Collection;
 
 public class EssentialsAddon {
-	public Location warpLoc(String[] teleportLoc) {
+	public Location warpLoc(String warpName) {
 		Essentials ess = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
 		try {
-			return ess.getWarps().getWarp(teleportLoc[1]);
+			return ess.getWarps().getWarp(warpName);
 		} catch (WarpNotFoundException | InvalidWorldException e) {
 			return null;
 		}
+	}
+
+	public boolean isWarp(String warpName) {
+		Essentials ess = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
+		return ess.getWarps().isWarp(warpName);
 	}
 
 	public Collection<String> warps() {
