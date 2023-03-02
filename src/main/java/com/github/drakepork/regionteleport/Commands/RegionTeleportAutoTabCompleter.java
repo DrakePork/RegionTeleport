@@ -92,7 +92,7 @@ public class RegionTeleportAutoTabCompleter implements TabCompleter {
 							break;
 					}
 
-                    if (splitIds.length > 1 || args[2].endsWith(",")) {
+                    if (splitIds.length > 1 || args[2].endsWith(",") || args[2].endsWith(":")) {
                         List<String> spawnIds = new ArrayList<>();
                         List<String> allSpawns = new ArrayList<>();
                         if (args[2].endsWith(",") || args[2].endsWith(":")) {
@@ -102,7 +102,15 @@ public class RegionTeleportAutoTabCompleter implements TabCompleter {
                         }
 
                         for (String spawnId : spawnIds) {
-                            allSpawns.add(args[2].substring(0, args[2].lastIndexOf(",")) + "," + spawnId);
+                            if(!args[2].endsWith(":")) {
+                                allSpawns.add(args[2].substring(0, args[2].lastIndexOf(",")) + "," + spawnId);
+                            } else {
+                                if(splitIds.length > 1) {
+                                    allSpawns.add(args[2].substring(0, args[2].lastIndexOf(",")) + "," + spawnId);
+                                } else {
+                                    allSpawns.add(args[2].substring(0, args[2].lastIndexOf(":")) + ":" + spawnId);
+                                }
+                            }
                         }
                         options.addAll(allSpawns);
                     } else {
