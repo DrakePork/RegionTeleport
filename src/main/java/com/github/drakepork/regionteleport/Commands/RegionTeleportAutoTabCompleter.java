@@ -92,22 +92,22 @@ public class RegionTeleportAutoTabCompleter implements TabCompleter {
 							break;
 					}
 
-					if(splitIds.length > 1 || args[2].endsWith(",")) {
-						List<String> spawnIds = new ArrayList<>();
-						List<String> allSpawns = new ArrayList<>();
-						if(args[2].endsWith(",")) {
-							spawnIds.addAll(commands);
-						} else {
-							StringUtil.copyPartialMatches(splitIds[splitIds.length - 1], commands, spawnIds);
-						}
+                    if (splitIds.length > 1 || args[2].endsWith(",")) {
+                        List<String> spawnIds = new ArrayList<>();
+                        List<String> allSpawns = new ArrayList<>();
+                        if (args[2].endsWith(",") || args[2].endsWith(":")) {
+                            spawnIds.addAll(commands);
+                        } else {
+                            StringUtil.copyPartialMatches(splitIds[splitIds.length - 1], commands, spawnIds);
+                        }
 
-						for(String spawnId : spawnIds) {
-							allSpawns.add(args[2].substring(0, args[2].lastIndexOf(",")) + "," + spawnId);
-						}
-						options.addAll(allSpawns);
-					} else {
-						StringUtil.copyPartialMatches(splitIds[splitIds.length - 1], commands, options);
-					}
+                        for (String spawnId : spawnIds) {
+                            allSpawns.add(args[2].substring(0, args[2].lastIndexOf(",")) + "," + spawnId);
+                        }
+                        options.addAll(allSpawns);
+                    } else {
+                        StringUtil.copyPartialMatches(splitIds[splitIds.length - 1], commands, options);
+                    }
 				} else if(args.length == 4) {
 					if ("tp".equalsIgnoreCase(args[0])) {
 						commands.add("-s");
