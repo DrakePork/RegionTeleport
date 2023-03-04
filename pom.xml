@@ -6,7 +6,7 @@
 
     <groupId>com.github.drakepork</groupId>
     <artifactId>RegionTeleport</artifactId>
-    <version>2.2.1</version>
+    <version>3.0.0</version>
     <packaging>jar</packaging>
 
     <name>RegionTeleport</name>
@@ -80,7 +80,7 @@
         <dependency>
             <groupId>com.Zrips.CMI</groupId>
             <artifactId>CMI</artifactId>
-            <version>9.1.0.6</version>
+            <version>9.3.1.5</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

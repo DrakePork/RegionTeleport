@@ -6,9 +6,9 @@ import org.bukkit.Location;
 import java.util.Collection;
 
 public class CMIAddon {
-	public Location warpLoc(String[] teleportLoc) {
-		if (CMI.getInstance().getWarpManager().getWarp(teleportLoc[1]) != null) {
-			return CMI.getInstance().getWarpManager().getWarp(teleportLoc[1]).getLoc().getBukkitLoc();
+	public Location warpLoc(String warpName) {
+		if (CMI.getInstance().getWarpManager().getWarp(warpName) != null) {
+			return CMI.getInstance().getWarpManager().getWarp(warpName).getLoc().getBukkitLoc();
 		} else {
 			return null;
 		}
