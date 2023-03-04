@@ -52,31 +52,36 @@ public class RegionTeleportAutoTabCompleter implements TabCompleter {
 							} else {
 								commands.add("__global__");
 							}
+
+							if(splitIds.length > 1 || args[1].endsWith(",")) {
+								List<String> spawnIds = new ArrayList<>();
+								List<String> allSpawns = new ArrayList<>();
+								if(args[1].endsWith(",")) {
+									spawnIds.addAll(commands);
+								} else {
+									StringUtil.copyPartialMatches(splitIds[splitIds.length - 1], commands, spawnIds);
+								}
+
+								for(String spawnId : spawnIds) {
+									allSpawns.add(args[1].substring(0, args[1].lastIndexOf(",")) + "," + spawnId);
+								}
+								options.addAll(allSpawns);
+							} else {
+								StringUtil.copyPartialMatches(splitIds[splitIds.length - 1], commands, options);
+							}
 							break;
 						case "delspawn":
 							File spawnloc = new File(this.plugin.getDataFolder() + File.separator + "spawnlocations.yml");
 							YamlConfiguration spawnConf = YamlConfiguration.loadConfiguration(spawnloc);
 							commands.addAll(spawnConf.getKeys(false));
+
+							StringUtil.copyPartialMatches(args[1], commands, options);
 							break;
 					}
-					if(splitIds.length > 1 || args[1].endsWith(",")) {
-						List<String> spawnIds = new ArrayList<>();
-						List<String> allSpawns = new ArrayList<>();
-						if(args[1].endsWith(",")) {
-							spawnIds.addAll(commands);
-						} else {
-							StringUtil.copyPartialMatches(splitIds[splitIds.length - 1], commands, spawnIds);
-						}
 
-						for(String spawnId : spawnIds) {
-							allSpawns.add(args[1].substring(0, args[1].lastIndexOf(",")) + "," + spawnId);
-						}
-						options.addAll(allSpawns);
-					} else {
-						StringUtil.copyPartialMatches(splitIds[splitIds.length - 1], commands, options);
-					}
 				} else if(args.length == 3) {
 					String[] splitIds = args[2].split(",");
+					String[] addonSplit = args[2].split(":");
 					switch (args[0].toLowerCase()) {
 						case "tp":
 						case "teleport":
@@ -89,33 +94,43 @@ public class RegionTeleportAutoTabCompleter implements TabCompleter {
 								YamlConfiguration spawnConf = YamlConfiguration.loadConfiguration(spawnloc);
 								commands.addAll(spawnConf.getKeys(false));
 							}
+
+							if (splitIds.length > 1 || args[2].endsWith(",") || args[2].endsWith(":") || addonSplit.length > 1) {
+								List<String> spawnIds = new ArrayList<>();
+								List<String> allSpawns = new ArrayList<>();
+								if (args[2].endsWith(",") || args[2].endsWith(":")) {
+									spawnIds.addAll(commands);
+								} else {
+									if(addonSplit.length > 1 && splitIds.length < 2)  {
+										StringUtil.copyPartialMatches(addonSplit[addonSplit.length - 1], commands, spawnIds);
+									} else {
+										StringUtil.copyPartialMatches(splitIds[splitIds.length - 1], commands, spawnIds);
+									}
+								}
+
+								for (String spawnId : spawnIds) {
+									if(!args[2].endsWith(":")) {
+										if(args[2].lastIndexOf(",") != -1) {
+											allSpawns.add(args[2].substring(0, args[2].lastIndexOf(",")) + "," + spawnId);
+										} else {
+											allSpawns.add(args[2].substring(0, args[2].lastIndexOf(":")) + ":" + spawnId);
+										}
+									} else {
+										if(splitIds.length > 1) {
+											allSpawns.add(args[2].substring(0, args[2].lastIndexOf(",")) + "," + spawnId);
+										} else {
+											allSpawns.add(args[2].substring(0, args[2].lastIndexOf(":")) + ":" + spawnId);
+										}
+									}
+								}
+								options.addAll(allSpawns);
+							} else {
+								StringUtil.copyPartialMatches(splitIds[splitIds.length - 1], commands, options);
+							}
 							break;
 					}
 
-                    if (splitIds.length > 1 || args[2].endsWith(",") || args[2].endsWith(":")) {
-                        List<String> spawnIds = new ArrayList<>();
-                        List<String> allSpawns = new ArrayList<>();
-                        if (args[2].endsWith(",") || args[2].endsWith(":")) {
-                            spawnIds.addAll(commands);
-                        } else {
-                            StringUtil.copyPartialMatches(splitIds[splitIds.length - 1], commands, spawnIds);
-                        }
 
-                        for (String spawnId : spawnIds) {
-                            if(!args[2].endsWith(":")) {
-                                allSpawns.add(args[2].substring(0, args[2].lastIndexOf(",")) + "," + spawnId);
-                            } else {
-                                if(splitIds.length > 1) {
-                                    allSpawns.add(args[2].substring(0, args[2].lastIndexOf(",")) + "," + spawnId);
-                                } else {
-                                    allSpawns.add(args[2].substring(0, args[2].lastIndexOf(":")) + ":" + spawnId);
-                                }
-                            }
-                        }
-                        options.addAll(allSpawns);
-                    } else {
-                        StringUtil.copyPartialMatches(splitIds[splitIds.length - 1], commands, options);
-                    }
 				} else if(args.length == 4) {
 					if ("tp".equalsIgnoreCase(args[0])) {
 						commands.add("-s");

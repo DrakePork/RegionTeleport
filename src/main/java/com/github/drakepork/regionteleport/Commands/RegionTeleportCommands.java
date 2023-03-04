@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class RegionTeleportCommands implements CommandExecutor {
@@ -192,8 +193,12 @@ public class RegionTeleportCommands implements CommandExecutor {
 						RegionManager regions = container.get(BukkitAdapter.adapt(player).getWorld());
 
 						for(String region : regionIds) {
-							if(!regions.hasRegion(region)) {
+							if(!regions.hasRegion(region) && !region.equalsIgnoreCase("__global__")) {
 								falseRegions.add(region);
+							} else if (region.equalsIgnoreCase("__global__")) {
+								regionIds = Collections.singletonList(region);
+								falseRegions = new ArrayList<>();
+								break;
 							}
 						}
 
@@ -335,11 +340,12 @@ public class RegionTeleportCommands implements CommandExecutor {
 												}
 											}
 
-											if (args[1].equalsIgnoreCase("__global__") && pOnline.getWorld() == pWorld) {
+											if (regionIds.contains("__global__") && pOnline.getWorld() == pWorld) {
 												Location location = new Location(w, x, y, z, yaw, pitch);
 												pOnline.teleport(location);
 												teleported++;
 											} else {
+												Bukkit.getLogger().info(regionIds.toString());
 												Location currLoc = pOnline.getLocation();
 												BlockVector3 v = BlockVector3.at(currLoc.getX(), currLoc.getY(), currLoc.getZ());
 												World world = pOnline.getWorld();
@@ -507,9 +513,11 @@ public class RegionTeleportCommands implements CommandExecutor {
                         RegionManager regions = container.get(BukkitAdapter.adapt(cWorld));
 
                         for(String region : regionIds) {
-                            if(!regions.hasRegion(region)) {
+                            if(!regions.hasRegion(region) && !region.equalsIgnoreCase("__global__")) {
                                 falseRegions.add(region);
-                            }
+                            } else if (region.equalsIgnoreCase("__global__")) {
+								regionIds = Collections.singletonList(region);
+							}
                         }
 
 						if (falseRegions.isEmpty()) {
@@ -636,12 +644,12 @@ public class RegionTeleportCommands implements CommandExecutor {
                                 } else {
                                     for (Player pOnline : Bukkit.getServer().getOnlinePlayers()) {
                                         if (!pOnline.hasPermission("regionteleport.teleport.bypass")) {
-                                            World w = Bukkit.getServer().getWorld(spawnConf.getString(args[2] + ".world"));
-                                            float yaw = (float) spawnConf.getDouble(args[2] + ".yaw");
-                                            float pitch = (float) spawnConf.getDouble(args[2] + ".pitch");
-                                            double x = spawnConf.getDouble(args[2] + ".x");
-                                            double y = spawnConf.getDouble(args[2] + ".y");
-                                            double z = spawnConf.getDouble(args[2] + ".z");
+											World w = Bukkit.getServer().getWorld(spawnConf.getString(spawnIds.get(i) + ".world"));
+											float yaw = (float) spawnConf.getDouble(spawnIds.get(i) + ".yaw");
+											float pitch = (float) spawnConf.getDouble(spawnIds.get(i) + ".pitch");
+											double x = spawnConf.getDouble(spawnIds.get(i) + ".x");
+											double y = spawnConf.getDouble(spawnIds.get(i) + ".y");
+											double z = spawnConf.getDouble(spawnIds.get(i) + ".z");
 
                                             if(spawnIds.size() > 1) {
                                                 i++;
