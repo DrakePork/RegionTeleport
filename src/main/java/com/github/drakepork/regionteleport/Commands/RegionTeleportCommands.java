@@ -345,7 +345,6 @@ public class RegionTeleportCommands implements CommandExecutor {
 												pOnline.teleport(location);
 												teleported++;
 											} else {
-												Bukkit.getLogger().info(regionIds.toString());
 												Location currLoc = pOnline.getLocation();
 												BlockVector3 v = BlockVector3.at(currLoc.getX(), currLoc.getY(), currLoc.getZ());
 												World world = pOnline.getWorld();
