@@ -1,5 +1,5 @@
 name: RegionTeleport
-version: ${project.version}
+version: 3.1.0
 main: com.github.drakepork.regionteleport.RegionTeleport
 api-version: 1.13
 depend: [WorldGuard]
@@ -8,10 +8,16 @@ author: DrakePork
 description: A plugin to teleport anyone inside a worldguard region to a specified point.
 commands:
   regiontp:
-    description: Contains all commands of the plugin
+    description: Contains the teleport commands of the plugin
     usage: /<command>
     aliases: [regionteleport]
-    permission: regionteleport.help
+    permission: regionteleport.command.help
+    permission-message: §4Error:§c You do not have permission to execute this command...
+  regionclear:
+    description: Clear entities from a WG region
+    usage: /<command>
+    permission: regionteleport.command.clear
+    permission-message: §4Error:§c You do not have permission to execute this command...
 permissions:
   regionteleport.command.*:
     description: Gives access to all regiontp commands
@@ -36,4 +42,6 @@ permissions:
   regionteleport.teleport.bypass:
     description: Does so you dont get teleported from the region
     default: false
+  regionteleport.command.clear:
+    description: Gives access to /regionclear
 

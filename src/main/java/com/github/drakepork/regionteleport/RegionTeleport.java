@@ -15,7 +15,6 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 public final class RegionTeleport extends JavaPlugin {
     public CMIAddon cmiAddon = null;
     public EssentialsAddon essAddon = null;
@@ -24,25 +23,27 @@ public final class RegionTeleport extends JavaPlugin {
     public void onEnable() {
         new ConfigCreator(this).init();
         new LangCreator(this).init();
-        
+
         int pluginId = 9090;
         Metrics metrics = new Metrics(this, pluginId);
 
-        File spawnloc = new File(this.getDataFolder() + File.separator + "spawnlocations.yml");
-        if(!spawnloc.exists()) {
+        File spawnLoc = new File(this.getDataFolder() + File.separator + "spawnlocations.yml");
+        if(!spawnLoc.exists()) {
             try {
-                spawnloc.createNewFile();
+                spawnLoc.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+
         if(Bukkit.getPluginManager().isPluginEnabled("CMI") && this.getConfig().getBoolean("addons.cmi")) {
-            getLogger().info("Enabled CMI Addon");
             cmiAddon = new CMIAddon();
+            getLogger().info("Enabled CMI Addon");
         }
+
         if(Bukkit.getPluginManager().isPluginEnabled("Essentials") && this.getConfig().getBoolean("addons.essentials")) {
-            getLogger().info("Enabled Essentials Addon");
             essAddon = new EssentialsAddon();
+            getLogger().info("Enabled Essentials Addon");
         }
 
         if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
@@ -52,7 +53,10 @@ public final class RegionTeleport extends JavaPlugin {
 
 
         Objects.requireNonNull(this.getCommand("regiontp")).setExecutor(new RegionTeleportCommands(this));
-        Objects.requireNonNull(this.getCommand("regiontp")).setTabCompleter(new RegionTeleportAutoTabCompleter(this));
+        Objects.requireNonNull(this.getCommand("regiontp")).setTabCompleter(new RegionTeleportTabCompleter(this));
+
+        Objects.requireNonNull(this.getCommand("regionclear")).setExecutor(new RegionClearCommand(this));
+        Objects.requireNonNull(this.getCommand("regionclear")).setTabCompleter(new RegionClearTabCompleter());
         getLogger().info("Enabled RegionTeleport - v" + getDescription().getVersion());
     }
 
@@ -60,14 +64,15 @@ public final class RegionTeleport extends JavaPlugin {
         this.reloadConfig();
         new ConfigCreator(this).init();
         new LangCreator(this).init();
-        File spawnloc = new File(this.getDataFolder() + File.separator + "spawnlocations.yml");
-        if(!spawnloc.exists()) {
+        File spawnLoc = new File(this.getDataFolder() + File.separator + "spawnlocations.yml");
+        if(!spawnLoc.exists()) {
             try {
-                spawnloc.createNewFile();
+                spawnLoc.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+
         if(Bukkit.getPluginManager().isPluginEnabled("CMI") && this.getConfig().getBoolean("addons.cmi")) {
             getLogger().info("Enabled CMI Addon");
             cmiAddon = new CMIAddon();
@@ -84,10 +89,29 @@ public final class RegionTeleport extends JavaPlugin {
         getLogger().info("Disabled RegionTeleport - v" + getDescription().getVersion());
     }
 
+    public boolean isDouble(String string) {
+        try {
+            Double.parseDouble(string);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        return true;
+    }
+
+
+    public void tellConsole(final String message){
+        Bukkit.getConsoleSender().sendMessage(message);
+    }
+
+    public String colourMessage(String message){
+        message = translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', message));
+        return message;
+    }
+
     public String translateHexColorCodes(String message) {
-        final Pattern hexPattern = Pattern.compile("\\{#" + "([A-Fa-f0-9]{6})" + "\\}");
+        final Pattern hexPattern = Pattern.compile("\\{#" + "([A-Fa-f0-9]{6})" + "}");
         Matcher matcher = hexPattern.matcher(message);
-        StringBuffer buffer = new StringBuffer(message.length() + 4 * 8);
+        StringBuilder buffer = new StringBuilder(message.length() + 4 * 8);
         while (matcher.find()) {
             String group = matcher.group(1);
             matcher.appendReplacement(buffer, ChatColor.COLOR_CHAR + "x"

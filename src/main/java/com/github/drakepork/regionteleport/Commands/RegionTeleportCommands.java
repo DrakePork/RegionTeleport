@@ -12,8 +12,6 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import com.github.drakepork.regionteleport.RegionTeleport;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -22,25 +20,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class RegionTeleportCommands implements CommandExecutor {
-	private final RegionTeleport plugin;
+	private final com.github.drakepork.regionteleport.RegionTeleport plugin;
 
-	public RegionTeleportCommands(final RegionTeleport plugin) {
+	public RegionTeleportCommands(final com.github.drakepork.regionteleport.RegionTeleport plugin) {
 		this.plugin = plugin;
-	}
-
-	public void tellConsole(final String message){
-		Bukkit.getConsoleSender().sendMessage(message);
-	}
-
-	public String ColourMessage(String message){
-		message = plugin.translateHexColorCodes(ChatColor.translateAlternateColorCodes('&', message));
-		return message;
 	}
 
 	@Override
@@ -48,26 +34,33 @@ public class RegionTeleportCommands implements CommandExecutor {
 		File lang = new File(plugin.getDataFolder() + File.separator
 				+ "lang" + File.separator + plugin.getConfig().getString("lang-file"));
 		FileConfiguration langConf = YamlConfiguration.loadConfiguration(lang);
-		String noPerm = ColourMessage(langConf.getString("global.no-perm"));
-		String prefix = langConf.getString("global.plugin-prefix");
+		String noPerm = Objects.requireNonNull(langConf.getString("global.no-perm"));
+		String prefix = Objects.requireNonNull(langConf.getString("global.plugin-prefix"));
 
-		File spawnloc = new File(plugin.getDataFolder() + File.separator + "spawnlocations.yml");
-		YamlConfiguration spawnConf = YamlConfiguration.loadConfiguration(spawnloc);
+		File spawnLoc = new File(plugin.getDataFolder() + File.separator + "spawnlocations.yml");
+		YamlConfiguration spawnConf = YamlConfiguration.loadConfiguration(spawnLoc);
 
-		if(sender instanceof Player) {
-			List<String> cmdList = (List<String>) langConf.getList("global.help");
-			String commandHelp = "";
-			for(int i = 0; i < cmdList.size(); i++) {
-				commandHelp += ColourMessage(cmdList.get(i));
+		if(sender instanceof Player player) {
+			ArrayList<String> cmdHelp = new ArrayList<>();
+			cmdHelp.add("&a-----=== &9RegionTeleport &a===-----");
+			cmdHelp.add("&2/regiontp help &f- &aShows all commands");
+			cmdHelp.add("&2/regiontp teleport/tp &f<region(s)> <spawn(s)> (-s) &f- &aTeleports all players within the region to the specified location");
+			cmdHelp.add("&2/regiontp setspawn &f<name> &f- &aCreates a spawn location");
+			cmdHelp.add("&2/regiontp delspawn &f<name> &f- &aDeletes a spawn location");
+			cmdHelp.add("&2/regiontp spawnlist &f- &aLists all spawn Locations");
+			cmdHelp.add("&2/regiontp reload &f- &aReloads the plugin");
+			cmdHelp.add("&2/regionclear <region(s)> <types> (-s) (-w:<worldname>) &f- &aClears the specificed regions for the specified entity types");
+			StringBuilder commandHelp = new StringBuilder();
+			for(int i = 0; i < cmdHelp.size(); i++) {
+				commandHelp.append(plugin.colourMessage(cmdHelp.get(i)));
 
-				if(i + 1 < cmdList.size()) {
-					commandHelp += "\n";
+				if(i + 1 < cmdHelp.size()) {
+					commandHelp.append("\n");
 				}
 			}
-			Player player = (Player) sender;
 			if(args.length < 1) {
 				if(player.hasPermission("regionteleport.command.help")) {
-					player.sendMessage(commandHelp);
+					player.sendMessage(commandHelp.toString());
 				} else {
 					player.sendMessage(noPerm);
 
@@ -75,42 +68,42 @@ public class RegionTeleportCommands implements CommandExecutor {
 				return true;
 			}
 
-			switch(args[0].toLowerCase()) {
-				case "help":
-					if(player.hasPermission("regionteleport.command.help")) {
-						player.sendMessage(commandHelp);
+			switch (args[0].toLowerCase()) {
+				case "help" -> {
+					if (player.hasPermission("regionteleport.command.help")) {
+						player.sendMessage(commandHelp.toString());
 					} else {
 						player.sendMessage(noPerm);
 					}
-					break;
-				case "setspawn":
-					if(player.hasPermission("regionteleport.command.setspawn")) {
+				}
+				case "setspawn" -> {
+					if (player.hasPermission("regionteleport.command.setspawn")) {
 						if (args.length < 2) {
-							player.sendMessage(ColourMessage(prefix + langConf.getString("spawn.specify-loc-name")));
+							player.sendMessage(plugin.colourMessage(prefix + langConf.getString("spawn.specify-loc-name")));
 							return true;
 						}
 
 						if (args.length > 2) {
-							player.sendMessage(ColourMessage(prefix + langConf.getString("spawn.wrong-usage-setspawn")));
+							player.sendMessage(plugin.colourMessage(prefix + langConf.getString("spawn.wrong-usage-setspawn")));
 							return true;
 						}
 
 						if (spawnConf.contains(args[1])) {
-							String spawnExist = langConf.getString("spawn.spawn-already-exists").replaceAll("\\[name\\]", args[1]);
-							player.sendMessage(ColourMessage(prefix + spawnExist));
+							String spawnExist = Objects.requireNonNull(langConf.getString("spawn.spawn-already-exists")).replaceAll("\\[name]", args[1]);
+							player.sendMessage(plugin.colourMessage(prefix + spawnExist));
 							return true;
 						}
 
-						spawnConf.set(args[1] + ".world", player.getLocation().getWorld().getName());
+						spawnConf.set(args[1] + ".world", Objects.requireNonNull(player.getLocation().getWorld()).getName());
 						spawnConf.set(args[1] + ".x", player.getLocation().getX());
 						spawnConf.set(args[1] + ".y", player.getLocation().getY());
 						spawnConf.set(args[1] + ".z", player.getLocation().getZ());
 						spawnConf.set(args[1] + ".yaw", player.getLocation().getYaw());
 						spawnConf.set(args[1] + ".pitch", player.getLocation().getPitch());
 						try {
-							spawnConf.save(spawnloc);
-							String setspawnSuccess = langConf.getString("spawn.successful-setspawn").replaceAll("\\[name\\]", args[1]);
-							player.sendMessage(ColourMessage(prefix + setspawnSuccess));
+							spawnConf.save(spawnLoc);
+							String setSpawnSuccess = Objects.requireNonNull(langConf.getString("spawn.successful-setspawn")).replaceAll("\\[name]", args[1]);
+							player.sendMessage(plugin.colourMessage(prefix + setSpawnSuccess));
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
@@ -118,71 +111,70 @@ public class RegionTeleportCommands implements CommandExecutor {
 					} else {
 						player.sendMessage(noPerm);
 					}
-					break;
-				case "delspawn":
-					if(player.hasPermission("regionteleport.command.delspawn")) {
+				}
+				case "delspawn" -> {
+					if (player.hasPermission("regionteleport.command.delspawn")) {
 						if (args.length < 2) {
-							player.sendMessage(ColourMessage(prefix + langConf.getString("spawn.specify-loc-name")));
+							player.sendMessage(plugin.colourMessage(prefix + langConf.getString("spawn.specify-loc-name")));
 							return true;
 						}
 
 						if (args.length > 2) {
-							player.sendMessage(ColourMessage(prefix + langConf.getString("spawn.wrong-usage-delspawn")));
+							player.sendMessage(plugin.colourMessage(prefix + langConf.getString("spawn.wrong-usage-delspawn")));
 							return true;
 						}
 
-						if(spawnConf.contains(args[1])) {
+						if (spawnConf.contains(args[1])) {
 							spawnConf.set(args[1], null);
 							try {
-								spawnConf.save(spawnloc);
-								String delspawnSuccess = langConf.getString("spawn.successful-delspawn").replaceAll("\\[name\\]", args[1]);
-								player.sendMessage(ColourMessage(prefix + delspawnSuccess));
+								spawnConf.save(spawnLoc);
+								String delSpawnSuccess = Objects.requireNonNull(langConf.getString("spawn.successful-delspawn")).replaceAll("\\[name]", args[1]);
+								player.sendMessage(plugin.colourMessage(prefix + delSpawnSuccess));
 							} catch (IOException e) {
 								e.printStackTrace();
-								String delspawnFail = langConf.getString("spawn.failed-delspawn").replaceAll("\\[name\\]", args[1]);
-								player.sendMessage(ColourMessage(prefix + delspawnFail));
+								String delSpawnFail = Objects.requireNonNull(langConf.getString("spawn.failed-delspawn")).replaceAll("\\[name]", args[1]);
+								player.sendMessage(plugin.colourMessage(prefix + delSpawnFail));
 							}
 						} else {
-							String noSpawn = langConf.getString("spawn.no-such-spawn").replaceAll("\\[name\\]", args[1]);
-							player.sendMessage(ColourMessage(prefix + noSpawn));
+							String noSpawn = Objects.requireNonNull(langConf.getString("spawn.no-such-spawn")).replaceAll("\\[name]", args[1]);
+							player.sendMessage(plugin.colourMessage(prefix + noSpawn));
 						}
 
 					} else {
 						player.sendMessage(noPerm);
 					}
-					break;
-				case "spawnlist":
-					if(player.hasPermission("regionteleport.command.spawnlist")) {
+				}
+				case "spawnlist" -> {
+					if (player.hasPermission("regionteleport.command.spawnlist")) {
 						if (args.length > 1) {
-							player.sendMessage(ColourMessage(prefix + langConf.getString("spawn.wrong-usage-spawnlist")));
+							player.sendMessage(plugin.colourMessage(prefix + langConf.getString("spawn.wrong-usage-spawnlist")));
 							return true;
 						}
 
-						player.sendMessage(ColourMessage(langConf.getString("spawn.list-header")));
+						player.sendMessage(plugin.colourMessage(langConf.getString("spawn.list-header")));
 						for (String spawnName : spawnConf.getKeys(false)) {
-							String spawn = langConf.getString("spawn.list-spawn").replaceAll("\\[name\\]", spawnName);
-							player.sendMessage(ColourMessage(spawn));
+							String spawn = Objects.requireNonNull(langConf.getString("spawn.list-spawn")).replaceAll("\\[name]", spawnName);
+							player.sendMessage(plugin.colourMessage(spawn));
 						}
 					} else {
 						player.sendMessage(noPerm);
 					}
-					break;
-				case "reload":
-					if(player.hasPermission("regionteleport.command.reload")) {
+				}
+				case "reload" -> {
+					if (player.hasPermission("regionteleport.command.reload")) {
 						plugin.onReload();
-						player.sendMessage(ColourMessage(langConf.getString("global.reload")));
+						player.sendMessage(plugin.colourMessage(langConf.getString("global.reload")));
 					}
-					break;
-				case "teleport":
-				case "tp":
-					if(player.hasPermission("regionteleport.command.teleport")) {
+				}
+				case "teleport", "tp" -> {
+					if (player.hasPermission("regionteleport.command.teleport")) {
 						if (args.length < 3) {
-							player.sendMessage(ColourMessage(prefix + langConf.getString("teleport.wrong-usage")));
+							player.sendMessage(plugin.colourMessage(prefix + langConf.getString("teleport.wrong-usage")));
 							return true;
 						}
 
 						if (args.length > 4) {
-							player.sendMessage(ColourMessage(prefix + langConf.getString("teleport.wrong-usage")));
+							player.sendMessage(plugin.colourMessage(prefix + langConf.getString("teleport.wrong-usage")));
 							return true;
 						}
 
@@ -191,9 +183,9 @@ public class RegionTeleportCommands implements CommandExecutor {
 
 						RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
 						RegionManager regions = container.get(BukkitAdapter.adapt(player).getWorld());
-
-						for(String region : regionIds) {
-							if(!regions.hasRegion(region) && !region.equalsIgnoreCase("__global__")) {
+						assert regions != null;
+						for (String region : regionIds) {
+							if (!regions.hasRegion(region) && !region.equalsIgnoreCase("__global__")) {
 								falseRegions.add(region);
 							} else if (region.equalsIgnoreCase("__global__")) {
 								regionIds = Collections.singletonList(region);
@@ -207,18 +199,18 @@ public class RegionTeleportCommands implements CommandExecutor {
 							List<String> spawnIds;
 							List<String> falseSpawns = new ArrayList<>();
 
-							if(args[2].contains(":")) {
+							if (args[2].contains(":")) {
 								String[] spawnAddon = args[2].split(":");
 								addon = spawnAddon[0];
 								spawnIds = Arrays.asList(spawnAddon[1].split(","));
 
-								if(addon.equalsIgnoreCase("cmi")) {
+								if (addon.equalsIgnoreCase("cmi")) {
 									for (String spawn : spawnIds) {
 										if (plugin.cmiAddon.warpLoc(spawn) == null) {
 											falseSpawns.add(spawn);
 										}
 									}
-								} else if(addon.equalsIgnoreCase("ess") || addon.equalsIgnoreCase("essentials")) {
+								} else if (addon.equalsIgnoreCase("ess") || addon.equalsIgnoreCase("essentials")) {
 									for (String spawn : spawnIds) {
 										if (!plugin.essAddon.isWarp(spawn)) {
 											falseSpawns.add(spawn);
@@ -228,112 +220,113 @@ public class RegionTeleportCommands implements CommandExecutor {
 							} else {
 								spawnIds = Arrays.asList(args[2].split(","));
 
-								for(String spawn : spawnIds) {
-									if(!spawnConf.contains(spawn)) {
+								for (String spawn : spawnIds) {
+									if (!spawnConf.contains(spawn)) {
 										falseSpawns.add(spawn);
 									}
 								}
 							}
 
-							if(falseSpawns.isEmpty()) {
+							if (falseSpawns.isEmpty()) {
 								int teleported = 0;
 								int i = 0;
 								World pWorld = player.getWorld();
 								if (!addon.isEmpty()) {
 									switch (addon.toLowerCase()) {
-										case "cmi":
+										case "cmi" -> {
 											if (plugin.cmiAddon == null) {
-												player.sendMessage(ColourMessage(langConf.getString("addon.disabled").replaceAll("\\[name\\]", addon)));
+												player.sendMessage(plugin.colourMessage(Objects.requireNonNull(langConf.getString("addon.disabled")).replaceAll("\\[name]", addon)));
 												return true;
 											}
-											break;
-										case "essentials":
-										case "ess":
+										}
+										case "essentials", "ess" -> {
 											if (plugin.essAddon == null) {
-												player.sendMessage(ColourMessage(langConf.getString("addon.disabled").replaceAll("\\[name\\]", addon)));
+												player.sendMessage(plugin.colourMessage(Objects.requireNonNull(langConf.getString("addon.disabled")).replaceAll("\\[name]", addon)));
 												return true;
 											}
-											break;
-										default:
-											player.sendMessage(ColourMessage(langConf.getString("teleport.no-such-addon").replaceAll("\\[name\\]", addon)));
+										}
+										default -> {
+											player.sendMessage(plugin.colourMessage(Objects.requireNonNull(langConf.getString("teleport.no-such-addon")).replaceAll("\\[name]", addon)));
 											return true;
+										}
 									}
 									for (Player pOnline : Bukkit.getServer().getOnlinePlayers()) {
 										if (!pOnline.hasPermission("regionteleport.teleport.bypass")) {
-											if(spawnIds.size() > 1) {
+											if (spawnIds.size() > 1) {
 												i++;
 												if (spawnIds.size() == i) {
 													i = 0;
 												}
 											}
 											switch (addon.toLowerCase()) {
-												case "cmi":
-                                                    if (regionIds.contains("__global__") && pOnline.getWorld() == pWorld) {
-                                                        Location nLoc = plugin.cmiAddon.warpLoc(spawnIds.get(i));
-                                                        pOnline.teleport(nLoc);
-                                                        teleported++;
-                                                    } else {
-                                                        Location loc = pOnline.getLocation();
-                                                        BlockVector3 v = BlockVector3.at(loc.getX(), loc.getY(), loc.getZ());
-                                                        World world = pOnline.getWorld();
-                                                        RegionManager rm = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(world));
-                                                        ApplicableRegionSet set = rm.getApplicableRegions(v);
-                                                        for (ProtectedRegion r : set) {
-                                                            if (regionIds.contains(r.getId())) {
-                                                                Location nLoc = plugin.cmiAddon.warpLoc(spawnIds.get(i));
-                                                                pOnline.teleport(nLoc);
-                                                                teleported++;
-                                                                break;
-                                                            }
-                                                        }
-                                                    }
-													break;
-												case "essentials":
-												case "ess":
+												case "cmi" -> {
+													if (regionIds.contains("__global__") && pOnline.getWorld() == pWorld) {
+														Location nLoc = plugin.cmiAddon.warpLoc(spawnIds.get(i));
+														pOnline.teleport(nLoc);
+														teleported++;
+													} else {
+														Location loc = pOnline.getLocation();
+														BlockVector3 v = BlockVector3.at(loc.getX(), loc.getY(), loc.getZ());
+														World world = pOnline.getWorld();
+														RegionManager rm = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(world));
+														assert rm != null;
+														ApplicableRegionSet set = rm.getApplicableRegions(v);
+														for (ProtectedRegion r : set) {
+															if (regionIds.contains(r.getId())) {
+																Location nLoc = plugin.cmiAddon.warpLoc(spawnIds.get(i));
+																pOnline.teleport(nLoc);
+																teleported++;
+																break;
+															}
+														}
+													}
+												}
+												case "essentials", "ess" -> {
 													if (regionIds.contains("__global__") && pOnline.getWorld() == pWorld) {
 														Location nLoc = plugin.essAddon.warpLoc(spawnIds.get(i));
 														pOnline.teleport(nLoc);
 														teleported++;
 													} else {
-                                                        Location loc = pOnline.getLocation();
-                                                        BlockVector3 v = BlockVector3.at(loc.getX(), loc.getY(), loc.getZ());
-                                                        World world = pOnline.getWorld();
-                                                        RegionManager rm = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(world));
-                                                        ApplicableRegionSet set = rm.getApplicableRegions(v);
-                                                        for (ProtectedRegion r : set) {
-                                                            if (regionIds.contains(r.getId())) {
-                                                                Location nLoc = plugin.essAddon.warpLoc(spawnIds.get(i));
-                                                                pOnline.teleport(nLoc);
-                                                                teleported++;
-                                                                break;
-                                                            }
-                                                        }
+														Location loc = pOnline.getLocation();
+														BlockVector3 v = BlockVector3.at(loc.getX(), loc.getY(), loc.getZ());
+														World world = pOnline.getWorld();
+														RegionManager rm = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(world));
+														assert rm != null;
+														ApplicableRegionSet set = rm.getApplicableRegions(v);
+														for (ProtectedRegion r : set) {
+															if (regionIds.contains(r.getId())) {
+																Location nLoc = plugin.essAddon.warpLoc(spawnIds.get(i));
+																pOnline.teleport(nLoc);
+																teleported++;
+																break;
+															}
+														}
 													}
-													break;
+												}
 											}
 										}
 									}
 									if (args.length == 4) {
 										if (!args[3].equalsIgnoreCase(("-s"))) {
-											player.sendMessage(ColourMessage(prefix + langConf.getString("teleport.wrong-usage")));
+											player.sendMessage(plugin.colourMessage(prefix + langConf.getString("teleport.wrong-usage")));
 										}
 									} else {
-										String tpSuccess = langConf.getString("teleport.successful-teleport").replaceAll("\\[name\\]", spawnIds.toString());
-										tpSuccess = tpSuccess.replaceAll("\\[region\\]", regionIds.toString());
-										tpSuccess = tpSuccess.replaceAll("\\[amount\\]", String.valueOf(teleported));
-										player.sendMessage(ColourMessage(prefix + tpSuccess));
+										String tpSuccess = Objects.requireNonNull(langConf.getString("teleport.successful-teleport")).replaceAll("\\[name]", spawnIds.toString());
+										tpSuccess = tpSuccess.replaceAll("\\[region]", regionIds.toString());
+										tpSuccess = tpSuccess.replaceAll("\\[amount]", String.valueOf(teleported));
+										player.sendMessage(plugin.colourMessage(prefix + tpSuccess));
 									}
 								} else {
 									for (Player pOnline : Bukkit.getServer().getOnlinePlayers()) {
 										if (!pOnline.hasPermission("regionteleport.teleport.bypass")) {
-											World w = Bukkit.getServer().getWorld(spawnConf.getString(spawnIds.get(i) + ".world"));
+											World w = Bukkit.getServer().getWorld(Objects.requireNonNull(spawnConf.getString(spawnIds.get(i) + ".world")));
 											float yaw = (float) spawnConf.getDouble(spawnIds.get(i) + ".yaw");
 											float pitch = (float) spawnConf.getDouble(spawnIds.get(i) + ".pitch");
 											double x = spawnConf.getDouble(spawnIds.get(i) + ".x");
 											double y = spawnConf.getDouble(spawnIds.get(i) + ".y");
 											double z = spawnConf.getDouble(spawnIds.get(i) + ".z");
 
-											if(spawnIds.size() > 1) {
+											if (spawnIds.size() > 1) {
 												i++;
 												if (spawnIds.size() == i) {
 													i = 0;
@@ -349,6 +342,7 @@ public class RegionTeleportCommands implements CommandExecutor {
 												BlockVector3 v = BlockVector3.at(currLoc.getX(), currLoc.getY(), currLoc.getZ());
 												World world = pOnline.getWorld();
 												RegionManager rm = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(world));
+												assert rm != null;
 												ApplicableRegionSet set = rm.getApplicableRegions(v);
 												for (ProtectedRegion r : set) {
 													if (regionIds.contains(r.getId())) {
@@ -362,73 +356,77 @@ public class RegionTeleportCommands implements CommandExecutor {
 									}
 									if (args.length == 4) {
 										if (!args[3].equalsIgnoreCase(("-s"))) {
-											player.sendMessage(ColourMessage(prefix + langConf.getString("teleport.wrong-usage")));
+											player.sendMessage(plugin.colourMessage(prefix + langConf.getString("teleport.wrong-usage")));
 										}
 									} else {
-										String tpSuccess = langConf.getString("teleport.successful-teleport").replaceAll("\\[name\\]", spawnIds.toString());
-										tpSuccess = tpSuccess.replaceAll("\\[region\\]", regionIds.toString());
-										tpSuccess = tpSuccess.replaceAll("\\[amount\\]", String.valueOf(teleported));
-										player.sendMessage(ColourMessage(prefix + tpSuccess));
+										String tpSuccess = Objects.requireNonNull(langConf.getString("teleport.successful-teleport")).replaceAll("\\[name]", spawnIds.toString());
+										tpSuccess = tpSuccess.replaceAll("\\[region]", regionIds.toString());
+										tpSuccess = tpSuccess.replaceAll("\\[amount]", String.valueOf(teleported));
+										player.sendMessage(plugin.colourMessage(prefix + tpSuccess));
 									}
 								}
 							} else {
-								String noSpawn = langConf.getString("spawn.no-such-spawn").replaceAll("\\[name\\]", falseSpawns.toString());
-								player.sendMessage(ColourMessage(prefix + noSpawn));
+								String noSpawn = Objects.requireNonNull(langConf.getString("spawn.no-such-spawn")).replaceAll("\\[name]", falseSpawns.toString());
+								player.sendMessage(plugin.colourMessage(prefix + noSpawn));
 							}
 						} else {
-							String noRegion = langConf.getString("teleport.no-such-region").replaceAll("\\[name\\]", falseRegions.toString());
-							player.sendMessage(ColourMessage(prefix + noRegion));
+							String noRegion = Objects.requireNonNull(langConf.getString("teleport.no-such-region")).replaceAll("\\[name]", falseRegions.toString());
+							player.sendMessage(plugin.colourMessage(prefix + noRegion));
 						}
 					} else {
 						player.sendMessage(noPerm);
 					}
-					break;
-				default:
-					player.sendMessage(commandHelp);
+				}
+				default -> {
+					player.sendMessage(commandHelp.toString());
 					return true;
+				}
 			}
 		} else {
-			List<String> cmdList = langConf.getStringList("console.help");
-			String commandHelp = "";
-			for (int i = 0; i < cmdList.size(); i++) {
-				commandHelp += ColourMessage(cmdList.get(i));
+			ArrayList<String> consoleHelp = new ArrayList<>();
+			consoleHelp.add("&a-----=== &9RegionTeleport &a===-----");
+			consoleHelp.add("&2/regiontp help &f- &aShows all commands");
+			consoleHelp.add("&2/regiontp teleport/tp &f<region> <spawn> <world> (-s) &f- &aTeleports all players within the region to the specified location");
+			consoleHelp.add("&2/regiontp setspawn &f<name> <x> <y> <z> <world> &f- &aCreates a spawn location");
+			consoleHelp.add("&2/regiontp delspawn &f<name> &f- &aDeletes a spawn location");
+			consoleHelp.add("&2/regiontp spawnlist &f- &aLists all spawn Locations");
+			consoleHelp.add("&2/regiontp reload &f- &aReloads the plugin");
+			consoleHelp.add("&2/regionclear <region(s)> <types> (-s) (-w:<worldname>) &f- &aClears the specificed regions for the specified entity types");
+			langConf.addDefault("console.help", consoleHelp);
+			StringBuilder commandHelp = new StringBuilder();
+			for (int i = 0; i < consoleHelp.size(); i++) {
+				commandHelp.append(plugin.colourMessage(consoleHelp.get(i)));
 
-				if (i + 1 < cmdList.size()) {
-					commandHelp += "\n";
+				if (i + 1 < consoleHelp.size()) {
+					commandHelp.append("\n");
 				}
 			}
 
 			if (args.length < 1) {
-				tellConsole(commandHelp);
+				plugin.tellConsole(commandHelp.toString());
 				return true;
 			}
 
 			switch (args[0].toLowerCase()) {
-				case "help":
-					tellConsole(commandHelp);
-					break;
-
-				case "setspawn":
+				case "help" -> plugin.tellConsole(commandHelp.toString());
+				case "setspawn" -> {
 					if (args.length < 6) {
-						tellConsole(ColourMessage(prefix + langConf.getString("console.wrong-usage-setspawn")));
+						plugin.tellConsole(plugin.colourMessage(prefix + langConf.getString("console.wrong-usage-setspawn")));
 						return true;
 					}
-
 					if (args.length > 6) {
-						tellConsole(ColourMessage(prefix + langConf.getString("console.wrong-usage-setspawn")));
+						plugin.tellConsole(plugin.colourMessage(prefix + langConf.getString("console.wrong-usage-setspawn")));
 						return true;
 					}
-
 					if (spawnConf.contains(args[1])) {
-						String spawnExist = langConf.getString("spawn.spawn-already-exists").replaceAll("\\[name\\]", args[1]);
-						tellConsole(ColourMessage(prefix + spawnExist));
+						String spawnExist = Objects.requireNonNull(langConf.getString("spawn.spawn-already-exists")).replaceAll("\\[name]", args[1]);
+						plugin.tellConsole(plugin.colourMessage(prefix + spawnExist));
 						return true;
 					}
-
 					World spawnWorld = Bukkit.getWorld(args[5]);
 					if (spawnWorld != null) {
-						Location loc = new Location(spawnWorld, Double.parseDouble(args[2]), Double.parseDouble(args[3]), Double.parseDouble(args[4]));
-						if (loc != null) {
+						if(plugin.isDouble(args[2]) && plugin.isDouble(args[3]) && plugin.isDouble(args[4])) {
+							Location loc = new Location(spawnWorld, Double.parseDouble(args[2]), Double.parseDouble(args[3]), Double.parseDouble(args[4]));
 							spawnConf.set(args[1] + ".world", spawnWorld.getName());
 							spawnConf.set(args[1] + ".x", loc.getX());
 							spawnConf.set(args[1] + ".y", loc.getY());
@@ -436,279 +434,274 @@ public class RegionTeleportCommands implements CommandExecutor {
 							spawnConf.set(args[1] + ".yaw", loc.getYaw());
 							spawnConf.set(args[1] + ".pitch", loc.getPitch());
 							try {
-								spawnConf.save(spawnloc);
-								String setspawnSuccess = langConf.getString("spawn.successful-setspawn").replaceAll("\\[name\\]", args[1]);
-								tellConsole(ColourMessage(prefix + setspawnSuccess));
+								spawnConf.save(spawnLoc);
+								String setSpawnSuccess = Objects.requireNonNull(langConf.getString("spawn.successful-setspawn")).replaceAll("\\[name]", args[1]);
+								plugin.tellConsole(plugin.colourMessage(prefix + setSpawnSuccess));
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
 						} else {
-							tellConsole(ColourMessage(prefix + langConf.getString("console.wrong-usage-setspawn")));
+							String wrongUsage = Objects.requireNonNull(langConf.getString("console.console.wrong-usage-setspawn")).replaceAll("\\[name]", args[5]);
+							plugin.tellConsole(plugin.colourMessage(prefix + wrongUsage));
 						}
 					} else {
-						String noSuchWorld = langConf.getString("console.no-such-world").replaceAll("\\[name\\]", args[5]);
-						tellConsole(ColourMessage(prefix + noSuchWorld));
+						String noSuchWorld = Objects.requireNonNull(langConf.getString("console.no-such-world")).replaceAll("\\[name]", args[5]);
+						plugin.tellConsole(plugin.colourMessage(prefix + noSuchWorld));
 					}
-					break;
-				case "delspawn":
+				}
+				case "delspawn" -> {
 					if (args.length < 2) {
-						tellConsole(ColourMessage(prefix + langConf.getString("spawn.specify-loc-name")));
+						plugin.tellConsole(plugin.colourMessage(prefix + langConf.getString("spawn.specify-loc-name")));
 						return true;
 					}
-
 					if (args.length > 2) {
-						tellConsole(ColourMessage(prefix + langConf.getString("spawn.wrong-usage-delspawn")));
+						plugin.tellConsole(plugin.colourMessage(prefix + langConf.getString("spawn.wrong-usage-delspawn")));
 						return true;
 					}
-
 					if (spawnConf.contains(args[1])) {
 						spawnConf.set(args[1], null);
 						try {
-							spawnConf.save(spawnloc);
-							String delspawnSuccess = langConf.getString("spawn.successful-delspawn").replaceAll("\\[name\\]", args[1]);
-							tellConsole(ColourMessage(prefix + delspawnSuccess));
+							spawnConf.save(spawnLoc);
+							String delSpawnSuccess = Objects.requireNonNull(langConf.getString("spawn.successful-delspawn")).replaceAll("\\[name]", args[1]);
+							plugin.tellConsole(plugin.colourMessage(prefix + delSpawnSuccess));
 						} catch (IOException e) {
 							e.printStackTrace();
-							String delspawnFail = langConf.getString("spawn.failed-delspawn").replaceAll("\\[name\\]", args[1]);
-							tellConsole(ColourMessage(prefix + delspawnFail));
+							String delSpawnFail = Objects.requireNonNull(langConf.getString("spawn.failed-delspawn")).replaceAll("\\[name]", args[1]);
+							plugin.tellConsole(plugin.colourMessage(prefix + delSpawnFail));
 						}
 					} else {
-						String noSpawn = langConf.getString("spawn.no-such-spawn").replaceAll("\\[name\\]", args[1]);
-						tellConsole(ColourMessage(prefix + noSpawn));
+						String noSpawn = Objects.requireNonNull(langConf.getString("spawn.no-such-spawn")).replaceAll("\\[name]", args[1]);
+						plugin.tellConsole(plugin.colourMessage(prefix + noSpawn));
 					}
-					break;
-				case "spawnlist":
+				}
+				case "spawnlist" -> {
 					if (args.length > 1) {
-						tellConsole(ColourMessage(prefix + langConf.getString("spawn.wrong-usage-spawnlist")));
+						plugin.tellConsole(plugin.colourMessage(prefix + langConf.getString("spawn.wrong-usage-spawnlist")));
 						return true;
 					}
-
-					tellConsole(ColourMessage(langConf.getString("spawn.list-header")));
+					plugin.tellConsole(plugin.colourMessage(langConf.getString("spawn.list-header")));
 					for (String spawnName : spawnConf.getKeys(false)) {
-						String spawn = langConf.getString("spawn.list-spawn").replaceAll("\\[name\\]", spawnName);
-						tellConsole(ColourMessage(spawn));
+						String spawn = Objects.requireNonNull(langConf.getString("spawn.list-spawn")).replaceAll("\\[name]", spawnName);
+						plugin.tellConsole(plugin.colourMessage(spawn));
 					}
-					break;
-				case "teleport":
-				case "tp":
+				}
+				case "teleport", "tp" -> {
 					if (args.length < 4) {
-						tellConsole(ColourMessage(prefix + langConf.getString("console.wrong-usage-teleport")));
+						plugin.tellConsole(plugin.colourMessage(prefix + langConf.getString("console.wrong-usage-teleport")));
 						return true;
 					}
-
 					if (args.length > 5) {
-						tellConsole(ColourMessage(prefix + langConf.getString("console.wrong-usage-teleport")));
+						plugin.tellConsole(plugin.colourMessage(prefix + langConf.getString("console.wrong-usage-teleport")));
 						return true;
 					}
-
-
-                    World cWorld = Bukkit.getWorld(args[3]);
-
+					World cWorld = Bukkit.getWorld(args[3]);
 					if (cWorld != null) {
-                        List<String> regionIds = Arrays.asList(args[1].split(","));
-                        List<String> falseRegions = new ArrayList<>();
+						List<String> regionIds = Arrays.asList(args[1].split(","));
+						List<String> falseRegions = new ArrayList<>();
 
-                        RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-                        RegionManager regions = container.get(BukkitAdapter.adapt(cWorld));
-
-                        for(String region : regionIds) {
-                            if(!regions.hasRegion(region) && !region.equalsIgnoreCase("__global__")) {
-                                falseRegions.add(region);
-                            } else if (region.equalsIgnoreCase("__global__")) {
+						RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+						RegionManager regions = container.get(BukkitAdapter.adapt(cWorld));
+						assert regions != null;
+						for (String region : regionIds) {
+							if (!regions.hasRegion(region) && !region.equalsIgnoreCase("__global__")) {
+								falseRegions.add(region);
+							} else if (region.equalsIgnoreCase("__global__")) {
 								regionIds = Collections.singletonList(region);
 							}
-                        }
+						}
 
 						if (falseRegions.isEmpty()) {
-                            String addon = "";
-                            List<String> spawnIds;
-                            List<String> falseSpawns = new ArrayList<>();
+							String addon = "";
+							List<String> spawnIds;
+							List<String> falseSpawns = new ArrayList<>();
 
-                            if(args[2].contains(":")) {
-                                String[] spawnAddon = args[2].split(":");
-                                addon = spawnAddon[0];
-                                spawnIds = Arrays.asList(spawnAddon[1].split(","));
+							if (args[2].contains(":")) {
+								String[] spawnAddon = args[2].split(":");
+								addon = spawnAddon[0];
+								spawnIds = Arrays.asList(spawnAddon[1].split(","));
 
-                                if(addon.equalsIgnoreCase("cmi")) {
-                                    for (String spawn : spawnIds) {
-                                        if (plugin.cmiAddon.warpLoc(spawn) == null) {
-                                            falseSpawns.add(spawn);
-                                        }
-                                    }
-                                } else if(addon.equalsIgnoreCase("ess") || addon.equalsIgnoreCase("essentials")) {
-                                    for (String spawn : spawnIds) {
-                                        if (!plugin.essAddon.isWarp(spawn)) {
-                                            falseSpawns.add(spawn);
-                                        }
-                                    }
-                                }
-                            } else {
-                                spawnIds = Arrays.asList(args[2].split(","));
+								if (addon.equalsIgnoreCase("cmi")) {
+									for (String spawn : spawnIds) {
+										if (plugin.cmiAddon.warpLoc(spawn) == null) {
+											falseSpawns.add(spawn);
+										}
+									}
+								} else if (addon.equalsIgnoreCase("ess") || addon.equalsIgnoreCase("essentials")) {
+									for (String spawn : spawnIds) {
+										if (!plugin.essAddon.isWarp(spawn)) {
+											falseSpawns.add(spawn);
+										}
+									}
+								}
+							} else {
+								spawnIds = Arrays.asList(args[2].split(","));
 
-                                for(String spawn : spawnIds) {
-                                    if(!spawnConf.contains(spawn)) {
-                                        falseSpawns.add(spawn);
-                                    }
-                                }
-                            }
-                            if(falseSpawns.isEmpty()) {
-                                int teleported = 0;
-                                int i = 0;
-                                if (!addon.isEmpty()) {
+								for (String spawn : spawnIds) {
+									if (!spawnConf.contains(spawn)) {
+										falseSpawns.add(spawn);
+									}
+								}
+							}
+							if (falseSpawns.isEmpty()) {
+								int teleported = 0;
+								int i = 0;
+								if (!addon.isEmpty()) {
 
-                                    switch (addon.toLowerCase()) {
-                                        case "cmi":
-                                            if (plugin.cmiAddon == null) {
-                                                tellConsole(ColourMessage(langConf.getString("addon.disabled").replaceAll("\\[name\\]", addon)));
-                                                return true;
-                                            }
-                                            break;
-                                        case "essentials":
-                                        case "ess":
-                                            if (plugin.essAddon == null) {
-                                                tellConsole(ColourMessage(langConf.getString("addon.disabled").replaceAll("\\[name\\]", addon)));
-                                                return true;
-                                            }
-                                            break;
-                                        default:
-                                            tellConsole(ColourMessage(langConf.getString("teleport.no-such-addon").replaceAll("\\[name\\]", addon)));
-                                            return true;
-                                    }
-                                    for (Player pOnline : Bukkit.getServer().getOnlinePlayers()) {
-                                        if (!pOnline.hasPermission("regionteleport.teleport.bypass")) {
-                                            if(spawnIds.size() > 1) {
-                                                i++;
-                                                if (spawnIds.size() == i) {
-                                                    i = 0;
-                                                }
-                                            }
-                                            switch (addon.toLowerCase()) {
-                                                case "cmi":
-                                                    if (regionIds.contains("__global__") && pOnline.getWorld() == cWorld) {
-                                                        Location nLoc = plugin.cmiAddon.warpLoc(spawnIds.get(i));
-                                                        pOnline.teleport(nLoc);
-                                                        teleported++;
-                                                    } else {
-                                                        Location loc = pOnline.getLocation();
-                                                        BlockVector3 v = BlockVector3.at(loc.getX(), loc.getY(), loc.getZ());
-                                                        World world = pOnline.getWorld();
-                                                        RegionManager rm = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(world));
-                                                        ApplicableRegionSet set = rm.getApplicableRegions(v);
-                                                        for (ProtectedRegion r : set) {
-                                                            if (regionIds.contains(r.getId())) {
-                                                                Location nLoc = plugin.cmiAddon.warpLoc(spawnIds.get(i));
-                                                                pOnline.teleport(nLoc);
-                                                                teleported++;
-                                                                break;
-                                                            }
-                                                        }
-                                                    }
-                                                    break;
-                                                case "essentials":
-                                                case "ess":
-                                                    if (regionIds.contains("__global__") && pOnline.getWorld() == cWorld) {
-                                                        Location nLoc = plugin.essAddon.warpLoc(spawnIds.get(i));
-                                                        pOnline.teleport(nLoc);
-                                                        teleported++;
-                                                    } else {
-                                                        Location loc = pOnline.getLocation();
-                                                        BlockVector3 v = BlockVector3.at(loc.getX(), loc.getY(), loc.getZ());
-                                                        World world = pOnline.getWorld();
-                                                        RegionManager rm = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(world));
-                                                        ApplicableRegionSet set = rm.getApplicableRegions(v);
-                                                        for (ProtectedRegion r : set) {
-                                                            if (regionIds.contains(r.getId())) {
-                                                                Location nLoc = plugin.essAddon.warpLoc(spawnIds.get(i));
-                                                                pOnline.teleport(nLoc);
-                                                                teleported++;
-                                                                break;
-                                                            }
-                                                        }
-                                                    }
-                                                    break;
-                                            }
+									switch (addon.toLowerCase()) {
+										case "cmi" -> {
+											if (plugin.cmiAddon == null) {
+												plugin.tellConsole(plugin.colourMessage(Objects.requireNonNull(langConf.getString("addon.disabled")).replaceAll("\\[name]", addon)));
+												return true;
+											}
+										}
+										case "essentials", "ess" -> {
+											if (plugin.essAddon == null) {
+												plugin.tellConsole(plugin.colourMessage(Objects.requireNonNull(langConf.getString("addon.disabled")).replaceAll("\\[name]", addon)));
+												return true;
+											}
+										}
+										default -> {
+											plugin.tellConsole(plugin.colourMessage(Objects.requireNonNull(langConf.getString("teleport.no-such-addon")).replaceAll("\\[name]", addon)));
+											return true;
+										}
+									}
+									for (Player pOnline : Bukkit.getServer().getOnlinePlayers()) {
+										if (!pOnline.hasPermission("regionteleport.teleport.bypass")) {
+											if (spawnIds.size() > 1) {
+												i++;
+												if (spawnIds.size() == i) {
+													i = 0;
+												}
+											}
+											switch (addon.toLowerCase()) {
+												case "cmi" -> {
+													if (regionIds.contains("__global__") && pOnline.getWorld() == cWorld) {
+														Location nLoc = plugin.cmiAddon.warpLoc(spawnIds.get(i));
+														pOnline.teleport(nLoc);
+														teleported++;
+													} else {
+														Location loc = pOnline.getLocation();
+														BlockVector3 v = BlockVector3.at(loc.getX(), loc.getY(), loc.getZ());
+														World world = pOnline.getWorld();
+														RegionManager rm = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(world));
+														assert rm != null;
+														ApplicableRegionSet set = rm.getApplicableRegions(v);
+														for (ProtectedRegion r : set) {
+															if (regionIds.contains(r.getId())) {
+																Location nLoc = plugin.cmiAddon.warpLoc(spawnIds.get(i));
+																pOnline.teleport(nLoc);
+																teleported++;
+																break;
+															}
+														}
+													}
+												}
+												case "essentials", "ess" -> {
+													if (regionIds.contains("__global__") && pOnline.getWorld() == cWorld) {
+														Location nLoc = plugin.essAddon.warpLoc(spawnIds.get(i));
+														pOnline.teleport(nLoc);
+														teleported++;
+													} else {
+														Location loc = pOnline.getLocation();
+														BlockVector3 v = BlockVector3.at(loc.getX(), loc.getY(), loc.getZ());
+														World world = pOnline.getWorld();
+														RegionManager rm = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(world));
+														assert rm != null;
+														ApplicableRegionSet set = rm.getApplicableRegions(v);
+														for (ProtectedRegion r : set) {
+															if (regionIds.contains(r.getId())) {
+																Location nLoc = plugin.essAddon.warpLoc(spawnIds.get(i));
+																pOnline.teleport(nLoc);
+																teleported++;
+																break;
+															}
+														}
+													}
+												}
+											}
 
-                                        }
-                                    }
-                                    if (args.length == 5) {
-                                        if (!args[4].equalsIgnoreCase(("-s"))) {
-                                            tellConsole(ColourMessage(prefix + langConf.getString("teleport.wrong-usage")));
-                                        }
-                                    } else {
-                                        String tpSuccess = langConf.getString("teleport.successful-teleport").replaceAll("\\[name\\]", spawnIds.toString());
-                                        tpSuccess = tpSuccess.replaceAll("\\[region\\]", regionIds.toString());
-                                        tpSuccess = tpSuccess.replaceAll("\\[amount\\]", String.valueOf(teleported));
-                                        tellConsole(ColourMessage(prefix + tpSuccess));
-                                    }
-                                } else {
-                                    for (Player pOnline : Bukkit.getServer().getOnlinePlayers()) {
-                                        if (!pOnline.hasPermission("regionteleport.teleport.bypass")) {
-											World w = Bukkit.getServer().getWorld(spawnConf.getString(spawnIds.get(i) + ".world"));
+										}
+									}
+									if (args.length == 5) {
+										if (!args[4].equalsIgnoreCase(("-s"))) {
+											plugin.tellConsole(plugin.colourMessage(prefix + langConf.getString("teleport.wrong-usage")));
+										}
+									} else {
+										String tpSuccess = Objects.requireNonNull(langConf.getString("teleport.successful-teleport")).replaceAll("\\[name]", spawnIds.toString());
+										tpSuccess = tpSuccess.replaceAll("\\[region]", regionIds.toString());
+										tpSuccess = tpSuccess.replaceAll("\\[amount]", String.valueOf(teleported));
+										plugin.tellConsole(plugin.colourMessage(prefix + tpSuccess));
+									}
+								} else {
+									for (Player pOnline : Bukkit.getServer().getOnlinePlayers()) {
+										if (!pOnline.hasPermission("regionteleport.teleport.bypass")) {
+											World w = Bukkit.getServer().getWorld(Objects.requireNonNull(spawnConf.getString(spawnIds.get(i) + ".world")));
 											float yaw = (float) spawnConf.getDouble(spawnIds.get(i) + ".yaw");
 											float pitch = (float) spawnConf.getDouble(spawnIds.get(i) + ".pitch");
 											double x = spawnConf.getDouble(spawnIds.get(i) + ".x");
 											double y = spawnConf.getDouble(spawnIds.get(i) + ".y");
 											double z = spawnConf.getDouble(spawnIds.get(i) + ".z");
 
-                                            if(spawnIds.size() > 1) {
-                                                i++;
-                                                if (spawnIds.size() == i) {
-                                                    i = 0;
-                                                }
-                                            }
+											if (spawnIds.size() > 1) {
+												i++;
+												if (spawnIds.size() == i) {
+													i = 0;
+												}
+											}
 
-                                            if (regionIds.contains("__global__") && pOnline.getWorld() == cWorld) {
-                                                Location location = new Location(w, x, y, z, yaw, pitch);
-                                                pOnline.teleport(location);
-                                                teleported++;
-                                            } else {
-                                                Location currLoc = pOnline.getLocation();
-                                                BlockVector3 v = BlockVector3.at(currLoc.getX(), currLoc.getY(), currLoc.getZ());
-                                                World world = pOnline.getWorld();
-                                                RegionManager rm = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(world));
-                                                ApplicableRegionSet set = rm.getApplicableRegions(v);
-                                                for (ProtectedRegion r : set) {
-                                                    if (regionIds.contains(r.getId())) {
-                                                        Location location = new Location(w, x, y, z, yaw, pitch);
-                                                        pOnline.teleport(location);
-                                                        teleported++;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    if (args.length == 5) {
-                                        if (!args[4].equalsIgnoreCase(("-s"))) {
-                                            tellConsole(ColourMessage(prefix + langConf.getString("teleport.wrong-usage")));
-                                        }
-                                    } else {
-                                        String tpSuccess = langConf.getString("teleport.successful-teleport").replaceAll("\\[name\\]", spawnIds.toString());
-                                        tpSuccess = tpSuccess.replaceAll("\\[region\\]", regionIds.toString());
-                                        tpSuccess = tpSuccess.replaceAll("\\[amount\\]", String.valueOf(teleported));
-                                        tellConsole(ColourMessage(prefix + tpSuccess));
-                                    }
-                                }
+											if (regionIds.contains("__global__") && pOnline.getWorld() == cWorld) {
+												Location location = new Location(w, x, y, z, yaw, pitch);
+												pOnline.teleport(location);
+												teleported++;
+											} else {
+												Location currLoc = pOnline.getLocation();
+												BlockVector3 v = BlockVector3.at(currLoc.getX(), currLoc.getY(), currLoc.getZ());
+												World world = pOnline.getWorld();
+												RegionManager rm = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(world));
+												assert rm != null;
+												ApplicableRegionSet set = rm.getApplicableRegions(v);
+												for (ProtectedRegion r : set) {
+													if (regionIds.contains(r.getId())) {
+														Location location = new Location(w, x, y, z, yaw, pitch);
+														pOnline.teleport(location);
+														teleported++;
+													}
+												}
+											}
+										}
+									}
+									if (args.length == 5) {
+										if (!args[4].equalsIgnoreCase(("-s"))) {
+											plugin.tellConsole(plugin.colourMessage(prefix + langConf.getString("teleport.wrong-usage")));
+										}
+									} else {
+										String tpSuccess = Objects.requireNonNull(langConf.getString("teleport.successful-teleport")).replaceAll("\\[name]", spawnIds.toString());
+										tpSuccess = tpSuccess.replaceAll("\\[region]", regionIds.toString());
+										tpSuccess = tpSuccess.replaceAll("\\[amount]", String.valueOf(teleported));
+										plugin.tellConsole(plugin.colourMessage(prefix + tpSuccess));
+									}
+								}
 							} else {
-								String noSpawn = langConf.getString("spawn.no-such-spawn").replaceAll("\\[name\\]", falseSpawns.toString());
-								tellConsole(ColourMessage(prefix + noSpawn));
+								String noSpawn = Objects.requireNonNull(langConf.getString("spawn.no-such-spawn")).replaceAll("\\[name]", falseSpawns.toString());
+								plugin.tellConsole(plugin.colourMessage(prefix + noSpawn));
 							}
 						} else {
-							String noRegion = langConf.getString("teleport.no-such-region").replaceAll("\\[name\\]", falseRegions.toString());
-							tellConsole(ColourMessage(prefix + noRegion));
+							String noRegion = Objects.requireNonNull(langConf.getString("teleport.no-such-region")).replaceAll("\\[name]", falseRegions.toString());
+							plugin.tellConsole(plugin.colourMessage(prefix + noRegion));
 						}
 					} else {
-						String noSuchWorld = langConf.getString("console.no-such-world").replaceAll("\\[name\\]", args[3]);
-						tellConsole(ColourMessage(prefix + noSuchWorld));
+						String noSuchWorld = Objects.requireNonNull(langConf.getString("console.no-such-world")).replaceAll("\\[name]", args[3]);
+						plugin.tellConsole(plugin.colourMessage(prefix + noSuchWorld));
 					}
-
-					break;
-				case "reload":
+				}
+				case "reload" -> {
 					plugin.onReload();
-					tellConsole(ColourMessage(langConf.getString("global.reload")));
-					break;
-				default:
-					tellConsole(commandHelp);
+					plugin.tellConsole(plugin.colourMessage(langConf.getString("global.reload")));
+				}
+				default -> {
+					plugin.tellConsole(commandHelp.toString());
 					return true;
+				}
 			}
 		}
 		return true;

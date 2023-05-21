@@ -7,24 +7,27 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import java.util.Collection;
+import java.util.Objects;
 
 public class EssentialsAddon {
+
+	private Essentials getEssentials() {
+		return (Essentials) Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("Essentials"));
+	}
+
 	public Location warpLoc(String warpName) {
-		Essentials ess = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
 		try {
-			return ess.getWarps().getWarp(warpName);
+			return getEssentials().getWarps().getWarp(warpName);
 		} catch (WarpNotFoundException | InvalidWorldException e) {
 			return null;
 		}
 	}
 
 	public boolean isWarp(String warpName) {
-		Essentials ess = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
-		return ess.getWarps().isWarp(warpName);
+		return getEssentials().getWarps().isWarp(warpName);
 	}
 
 	public Collection<String> warps() {
-		Essentials ess = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
-		return ess.getWarps().getList();
+		return getEssentials().getWarps().getList();
 	}
 }

@@ -35,7 +35,7 @@ public class PlaceholderCreator extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getVersion() {
-        return "2.2.0";
+        return plugin.getDescription().getVersion();
     }
 
     @Override
@@ -52,7 +52,9 @@ public class PlaceholderCreator extends PlaceholderExpansion {
                 String regionName = params.split("_r:")[1];
 
                 RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+                assert world != null;
                 RegionManager regions = container.get(BukkitAdapter.adapt(world));
+                assert regions != null;
                 if (regions.getRegion(regionName) != null || regionName.equalsIgnoreCase("__global__")) {
                     int playerCount = 0;
                     for (Player pOnline : Bukkit.getServer().getOnlinePlayers()) {
@@ -85,7 +87,9 @@ public class PlaceholderCreator extends PlaceholderExpansion {
                 String regionName = params.split("_r:")[1];
 
                 RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+                assert world != null;
                 RegionManager regions = container.get(BukkitAdapter.adapt(world));
+                assert regions != null;
                 if (regions.getRegion(regionName) != null || regionName.equalsIgnoreCase("__global__")) {
                     int playerCount = 0;
                     for (Player pOnline : Bukkit.getServer().getOnlinePlayers()) {

@@ -6,7 +6,6 @@ import com.github.drakepork.regionteleport.RegionTeleport;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class LangCreator {
 	private final RegionTeleport plugin;
@@ -24,15 +23,6 @@ public class LangCreator {
 			// Global Messages
 
 			langConf.addDefault("global.plugin-prefix", "&f[&aRegionTeleport&f] ");
-			ArrayList<String> cmdHelp = new ArrayList<>();
-			cmdHelp.add("&a-----=== &9RegionTeleport &a===-----");
-			cmdHelp.add("&2/regiontp help &f- &aShows all commands");
-			cmdHelp.add("&2/regiontp teleport/tp &f<region> <spawn> (-s) &f- &aTeleports all players within the region to the specified location");
-			cmdHelp.add("&2/regiontp setspawn &f<name> &f- &aCreates a spawn location");
-			cmdHelp.add("&2/regiontp delspawn &f<name> &f- &aDeletes a spawn location");
-			cmdHelp.add("&2/regiontp spawnlist &f- &aLists all spawn Locations");
-			cmdHelp.add("&2/regiontp reload &f- &aReloads the plugin");
-			langConf.addDefault("global.help", cmdHelp);
 			langConf.addDefault("global.no-perm", "&4Error: &cYou do not have permission to execute this command...");
 			langConf.addDefault("global.reload", "&aPlugin has been reloaded!");
 
@@ -50,7 +40,6 @@ public class LangCreator {
 			langConf.addDefault("spawn.list-header", "&7--=== &2Spawn Locations &7===--");
 			langConf.addDefault("spawn.list-spawn", "&f- &a[name]");
 
-
 			// Addon Related Messages
 
 			langConf.addDefault("addon.no-such-addon", "&cNo addon with name &7[name] &cexists!");
@@ -58,24 +47,28 @@ public class LangCreator {
 
 			// Teleport Related Messages
 
-			langConf.addDefault("teleport.wrong-usage", "&cIncorrect Usage! /regiontp tp <region> <spawn> (-s)");
+			langConf.addDefault("teleport.wrong-usage", "&cIncorrect Usage! /regiontp tp <region(s)> <spawn(s)> (-s)");
 			langConf.addDefault("teleport.successful-teleport", "&aSent &e[amount] &aplayer(s) from region(s) &2[region] &ato spawnlocation(s) &2[name]&a!");
 			langConf.addDefault("teleport.no-such-region", "&cNo region with name &7[name] &cexists in this world!");
 
+			// Region Clear Related Messages
 
-			// Console Specific Messages
+			langConf.addDefault("region-clear.prefix", "&f[&aRegionClear&f] ");
+			langConf.addDefault("region-clear.successful-clear", "&aRemoved from region(s) &2[name] &aa total of &e[amount] &aentities. ([entity-specific]&a)");
+			langConf.addDefault("region-clear.successful-clear-entity-specific", "&6[entity]&7: &e[amount]");
+			langConf.addDefault("region-clear.wrong-usage-specific", "&cIncorrect Usage! No specific entity specified..");
+			langConf.addDefault("region-clear.no-such-specific", "&7[name] &cis not a valid entity!");
+			langConf.addDefault("region-clear.no-such-item", "&7[name] &cis not a valid item!");
+			langConf.addDefault("region-clear.no-such-world", "&7[name] &cis not a valid world!");
+			langConf.addDefault("region-clear.no-such-region", "&7[name] &cis not a valid region!");
+			langConf.addDefault("region-clear.wrong-usage", "&cIncorrect Usage! /regionclear <region> (types) (-s) (-w:[world])");
+			langConf.addDefault("region-clear.no-such-region", "&cNo region with name &7[name] &cexists in this world!");
+
+			// Console Related Messages
+
 			langConf.addDefault("console.wrong-usage-setspawn", "&cIncorrect usage! /regiontp setspawn <name> <x> <y> <z> <world>");
 			langConf.addDefault("console.no-such-world", "&cNo world with name &7[name] &cexists!");
-			langConf.addDefault("console.wrong-usage-teleport", "&cIncorrect Usage! /regiontp tp <world> <region> <spawn> (-s)");
-			ArrayList<String> consoleHelp = new ArrayList<>();
-			consoleHelp.add("&a-----=== &9RegionTeleport &a===-----");
-			consoleHelp.add("&2/regiontp help &f- &aShows all commands");
-			consoleHelp.add("&2/regiontp teleport/tp &f<region> <spawn> <world> (-s) &f- &aTeleports all players within the region to the specified location");
-			consoleHelp.add("&2/regiontp setspawn &f<name> <x> <y> <z> <world> &f- &aCreates a spawn location");
-			consoleHelp.add("&2/regiontp delspawn &f<name> &f- &aDeletes a spawn location");
-			consoleHelp.add("&2/regiontp spawnlist &f- &aLists all spawn Locations");
-			consoleHelp.add("&2/regiontp reload &f- &aReloads the plugin");
-			langConf.addDefault("console.help", consoleHelp);
+			langConf.addDefault("console.wrong-usage-teleport", "&cIncorrect Usage! /regiontp tp <region(s)> <spawn(s)> <world> (-s)");
 
 			langConf.options().copyDefaults(true);
 			langConf.save(lang);
