@@ -1,4 +1,4 @@
-package com.github.drakepork.regionteleport.Addons;
+package com.github.drakepork.regionteleport.addons;
 
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.commands.WarpNotFoundException;

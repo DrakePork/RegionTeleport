@@ -1,4 +1,4 @@
-package com.github.drakepork.regionteleport.Commands;
+package com.github.drakepork.regionteleport.commands;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;

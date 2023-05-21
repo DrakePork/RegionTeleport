@@ -1,4 +1,4 @@
-package com.github.drakepork.regionteleport.Commands;
+package com.github.drakepork.regionteleport.commands;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
@@ -44,12 +44,12 @@ public class RegionTeleportCommands implements CommandExecutor {
 			ArrayList<String> cmdHelp = new ArrayList<>();
 			cmdHelp.add("&a-----=== &9RegionTeleport &a===-----");
 			cmdHelp.add("&2/regiontp help &f- &aShows all commands");
-			cmdHelp.add("&2/regiontp teleport/tp &f<region(s)> <spawn(s)> (-s) &f- &aTeleports all players within the region to the specified location");
+			cmdHelp.add("&2/regiontp teleport/tp &f<region(s)> <spawn(s)> (-s) - &aTeleports all players within the region to the specified location");
 			cmdHelp.add("&2/regiontp setspawn &f<name> &f- &aCreates a spawn location");
 			cmdHelp.add("&2/regiontp delspawn &f<name> &f- &aDeletes a spawn location");
 			cmdHelp.add("&2/regiontp spawnlist &f- &aLists all spawn Locations");
 			cmdHelp.add("&2/regiontp reload &f- &aReloads the plugin");
-			cmdHelp.add("&2/regionclear <region(s)> <types> (-s) (-w:<worldname>) &f- &aClears the specificed regions for the specified entity types");
+			cmdHelp.add("&2/regionclear &f<region(s)> <types> (-s) (-w:<worldname>) - &aClears the specificed regions for the specified entity types");
 			StringBuilder commandHelp = new StringBuilder();
 			for(int i = 0; i < cmdHelp.size(); i++) {
 				commandHelp.append(plugin.colourMessage(cmdHelp.get(i)));
@@ -386,12 +386,12 @@ public class RegionTeleportCommands implements CommandExecutor {
 			ArrayList<String> consoleHelp = new ArrayList<>();
 			consoleHelp.add("&a-----=== &9RegionTeleport &a===-----");
 			consoleHelp.add("&2/regiontp help &f- &aShows all commands");
-			consoleHelp.add("&2/regiontp teleport/tp &f<region> <spawn> <world> (-s) &f- &aTeleports all players within the region to the specified location");
+			consoleHelp.add("&2/regiontp teleport/tp &f<region(s)> <spawn(s)> <world> (-s) - &aTeleports all players within the region to the specified location");
 			consoleHelp.add("&2/regiontp setspawn &f<name> <x> <y> <z> <world> &f- &aCreates a spawn location");
 			consoleHelp.add("&2/regiontp delspawn &f<name> &f- &aDeletes a spawn location");
 			consoleHelp.add("&2/regiontp spawnlist &f- &aLists all spawn Locations");
 			consoleHelp.add("&2/regiontp reload &f- &aReloads the plugin");
-			consoleHelp.add("&2/regionclear <region(s)> <types> (-s) (-w:<worldname>) &f- &aClears the specificed regions for the specified entity types");
+			consoleHelp.add("&2/regionclear &f<region(s)> <types> (-s) (-w:<worldname>) - &aClears the specificed regions for the specified entity types");
 			langConf.addDefault("console.help", consoleHelp);
 			StringBuilder commandHelp = new StringBuilder();
 			for (int i = 0; i < consoleHelp.size(); i++) {

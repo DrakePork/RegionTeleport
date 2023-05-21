@@ -1,13 +1,14 @@
 package com.github.drakepork.regionteleport;
 
-import com.github.drakepork.regionteleport.Addons.CMIAddon;
-import com.github.drakepork.regionteleport.Addons.EssentialsAddon;
-import com.github.drakepork.regionteleport.Commands.*;
+import com.github.drakepork.regionteleport.addons.CMIAddon;
+import com.github.drakepork.regionteleport.addons.EssentialsAddon;
+import com.github.drakepork.regionteleport.commands.*;
+import com.github.drakepork.regionteleport.commands.regionclearcommands.RegionClearCommand;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
-import com.github.drakepork.regionteleport.Utils.*;
+import com.github.drakepork.regionteleport.utils.*;
 
 import java.io.File;
 import java.io.IOException;

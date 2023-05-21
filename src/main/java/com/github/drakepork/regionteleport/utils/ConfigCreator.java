@@ -1,4 +1,4 @@
-package com.github.drakepork.regionteleport.Utils;
+package com.github.drakepork.regionteleport.utils;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import com.github.drakepork.regionteleport.RegionTeleport;

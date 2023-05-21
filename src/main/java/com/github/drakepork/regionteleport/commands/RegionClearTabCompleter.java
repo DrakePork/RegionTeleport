@@ -1,6 +1,5 @@
-package com.github.drakepork.regionteleport.Commands;
+package com.github.drakepork.regionteleport.commands;
 
-import com.github.drakepork.regionteleport.RegionTeleport;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.managers.RegionManager;

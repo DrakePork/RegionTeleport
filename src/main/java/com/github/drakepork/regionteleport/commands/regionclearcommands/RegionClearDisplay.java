@@ -1,4 +1,4 @@
-package com.github.drakepork.regionteleport.Commands;
+package com.github.drakepork.regionteleport.commands.regionclearcommands;
 
 import com.github.drakepork.regionteleport.RegionTeleport;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
@@ -11,7 +11,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -22,16 +21,9 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.*;
 
-public class RegionClearCommand implements CommandExecutor {
-    private final RegionTeleport plugin;
-
-    public RegionClearCommand(final RegionTeleport plugin) {
-        this.plugin = plugin;
-    }
-
-
+public class RegionClearDisplay implements RegionClear {
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
+    public void clearRegion(@NotNull RegionTeleport plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         File lang = new File(plugin.getDataFolder() + File.separator
                 + "lang" + File.separator + plugin.getConfig().getString("lang-file"));
         FileConfiguration langConf = YamlConfiguration.loadConfiguration(lang);
@@ -75,11 +67,11 @@ public class RegionClearCommand implements CommandExecutor {
                             world = Objects.requireNonNull(Bukkit.getWorld(worldName[1]));
                         } else {
                             sender.sendMessage(plugin.colourMessage(prefix + Objects.requireNonNull(langConf.getString("region-clear.no-such-world")).replaceAll("\\[name]", worldName[1])));
-                            return true;
+                            return;
                         }
                     } else {
                         sender.sendMessage(plugin.colourMessage(prefix + langConf.getString("region-clear.wrong-usage-specific")));
-                        return true;
+                        return;
                     }
                 } else if(lowerType.contains("-named")) {
                     String[] specificName = type.split(":");
@@ -101,12 +93,12 @@ public class RegionClearCommand implements CommandExecutor {
                                 specificTypes.add(entityType);
                             } catch (IllegalArgumentException ignored) {
                                 sender.sendMessage(plugin.colourMessage(prefix + Objects.requireNonNull(langConf.getString("region-clear.no-such-specific")).replaceAll("\\[name]", entity)));
-                                return true;
+                                return;
                             }
                         }
                     } else {
                         sender.sendMessage(plugin.colourMessage(prefix + langConf.getString("region-clear.wrong-usage-specific")));
-                        return true;
+                        return;
                     }
                 } else if(lowerType.equalsIgnoreCase("-monsters")) {
                     removeMonsters = true;
@@ -120,7 +112,7 @@ public class RegionClearCommand implements CommandExecutor {
                                 specificItems.add(Material.getMaterial(item.toUpperCase()));
                             } else {
                                 sender.sendMessage(plugin.colourMessage(prefix + Objects.requireNonNull(langConf.getString("region-clear.no-such-item")).replaceAll("\\[name]", item)));
-                                return true;
+                                return;
                             }
                         }
                     }
@@ -304,6 +296,5 @@ public class RegionClearCommand implements CommandExecutor {
         } else {
             sender.sendMessage(plugin.colourMessage(prefix + langConf.getString("region-clear.wrong-usage")));
         }
-        return true;
     }
 }
