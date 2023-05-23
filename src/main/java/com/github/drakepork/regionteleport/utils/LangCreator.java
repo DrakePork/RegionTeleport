@@ -60,6 +60,7 @@ public class LangCreator {
 			langConf.addDefault("region-clear.no-such-specific", "&7[name] &cis not a valid entity!");
 			langConf.addDefault("region-clear.no-such-item", "&7[name] &cis not a valid item!");
 			langConf.addDefault("region-clear.no-such-world", "&7[name] &cis not a valid world!");
+			langConf.addDefault("region-clear.no-world-specified", "&cYou have to specify a world with -w:<worldname>");
 			langConf.addDefault("region-clear.no-such-region", "&7[name] &cis not a valid region!");
 			langConf.addDefault("region-clear.wrong-usage", "&cIncorrect Usage! /regionclear <region> (types) (-s) (-w:[world])");
 			langConf.addDefault("region-clear.no-such-region", "&cNo region with name &7[name] &cexists in this world!");

@@ -1,5 +1,5 @@
 name: RegionTeleport
-version: 3.1.0
+version: 3.1.1
 main: com.github.drakepork.regionteleport.RegionTeleport
 api-version: 1.13
 depend: [WorldGuard]
@@ -27,6 +27,7 @@ permissions:
       regionteleport.command.delspawn: true
       regionteleport.command.spawnlist: true
       regionteleport.command.teleport: true
+      regionteleport.command.clear: true
   regionteleport.command.help:
     description: Gives access to /regiontp help
   regionteleport.command.setspawn:

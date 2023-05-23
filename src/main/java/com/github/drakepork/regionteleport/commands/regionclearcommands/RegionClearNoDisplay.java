@@ -137,151 +137,154 @@ public class RegionClearNoDisplay implements RegionClear {
                 }
             }
             RegionContainer regionContainer = WorldGuard.getInstance().getPlatform().getRegionContainer();
-            assert world != null;
-            RegionManager regionManager = regionContainer.get(BukkitAdapter.adapt(world));
-            assert regionManager != null;
+            if(world != null) {
+                RegionManager regionManager = regionContainer.get(BukkitAdapter.adapt(world));
+                assert regionManager != null;
 
-            List<String> regionIds = Arrays.asList(args[0].split(","));
-            List<String> falseRegions = new ArrayList<>();
+                List<String> regionIds = Arrays.asList(args[0].split(","));
+                List<String> falseRegions = new ArrayList<>();
 
-            boolean isGlobal = false;
+                boolean isGlobal = false;
 
-            for (String region : regionIds) {
-                if (!regionManager.hasRegion(region) && !region.equalsIgnoreCase("__global__")) {
-                    falseRegions.add(region);
-                } else if (region.equalsIgnoreCase("__global__")) {
-                    regionIds = Collections.singletonList(region);
-                    falseRegions = new ArrayList<>();
-                    isGlobal = true;
-                    break;
-                }
-            }
-
-            if (falseRegions.isEmpty()) {
-                List<ProtectedRegion> regions = new ArrayList<>();
-                if(!isGlobal) {
-                    for (String regionId : regionIds) {
-                        regions.add(regionManager.getRegion(regionId));
+                for (String region : regionIds) {
+                    if (!regionManager.hasRegion(region) && !region.equalsIgnoreCase("__global__")) {
+                        falseRegions.add(region);
+                    } else if (region.equalsIgnoreCase("__global__")) {
+                        regionIds = Collections.singletonList(region);
+                        falseRegions = new ArrayList<>();
+                        isGlobal = true;
+                        break;
                     }
                 }
 
-                List<Entity> entities = world.getEntities();
-                boolean finalRemoveMonsters = removeMonsters;
-                boolean finalRemoveAnimals = removeAnimals;
-                boolean finalRemoveAmbient = removeAmbient;
-                boolean finalRemoveAll = removeAll;
-                boolean finalRemoveVehicles = removeVehicles;
-                boolean finalRemoveItems = removeItems;
-                boolean finalRemoveNpcs = removeNpcs;
-                String finalNamed = named;
-                boolean finalRemoveTamed = removeTamed;
-                boolean finalSilent = silent;
-                boolean finalNpcsOnly = npcsOnly;
-                boolean finalTamedOnly = tamedOnly;
-                boolean finalNamedOnly = namedOnly;
-                boolean finalIsGlobal = isGlobal;
-                List<String> finalRegionIds = regionIds;
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        List<Entity> entitiesToRemove = new ArrayList<>();
-                        HashMap<EntityType, Integer> removals = new HashMap<>();
-                        int totalAmount = 0;
-                        for(Entity entity : entities) {
-                            if (!(entity instanceof Player)) {
-                                Location loc = entity.getLocation();
-                                boolean insideRegion = regions.stream().anyMatch(region -> region.contains(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
-                                if (finalIsGlobal || insideRegion) {
-                                    EntityType entityType = entity.getType();
-                                    boolean removeEntity = finalRemoveAll;
-                                    if (finalRemoveMonsters && entity instanceof Monster) {
-                                        removeEntity = true;
-                                    } else if (finalRemoveAnimals && entity instanceof Animals) {
-                                        removeEntity = true;
-                                    } else if (finalRemoveAmbient && entity instanceof Ambient) {
-                                        removeEntity = true;
-                                    } else if (finalRemoveVehicles && entity instanceof Vehicle && !(entity instanceof LivingEntity)) {
-                                        removeEntity = true;
-                                    } else if (finalRemoveItems && entity instanceof Item item) {
-                                        if(specificItems.size() > 0) {
-                                            if(specificItems.contains(item.getItemStack().getType())) {
-                                                removeEntity = true;
-                                            }
-                                        } else {
+                if (falseRegions.isEmpty()) {
+                    List<ProtectedRegion> regions = new ArrayList<>();
+                    if(!isGlobal) {
+                        for (String regionId : regionIds) {
+                            regions.add(regionManager.getRegion(regionId));
+                        }
+                    }
+
+                    List<Entity> entities = world.getEntities();
+                    boolean finalRemoveMonsters = removeMonsters;
+                    boolean finalRemoveAnimals = removeAnimals;
+                    boolean finalRemoveAmbient = removeAmbient;
+                    boolean finalRemoveAll = removeAll;
+                    boolean finalRemoveVehicles = removeVehicles;
+                    boolean finalRemoveItems = removeItems;
+                    boolean finalRemoveNpcs = removeNpcs;
+                    String finalNamed = named;
+                    boolean finalRemoveTamed = removeTamed;
+                    boolean finalSilent = silent;
+                    boolean finalNpcsOnly = npcsOnly;
+                    boolean finalTamedOnly = tamedOnly;
+                    boolean finalNamedOnly = namedOnly;
+                    boolean finalIsGlobal = isGlobal;
+                    List<String> finalRegionIds = regionIds;
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            List<Entity> entitiesToRemove = new ArrayList<>();
+                            HashMap<EntityType, Integer> removals = new HashMap<>();
+                            int totalAmount = 0;
+                            for(Entity entity : entities) {
+                                if (!(entity instanceof Player)) {
+                                    Location loc = entity.getLocation();
+                                    boolean insideRegion = regions.stream().anyMatch(region -> region.contains(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
+                                    if (finalIsGlobal || insideRegion) {
+                                        EntityType entityType = entity.getType();
+                                        boolean removeEntity = finalRemoveAll;
+                                        if (finalRemoveMonsters && entity instanceof Monster) {
                                             removeEntity = true;
-                                        }
-                                    }
-
-                                    if (specificTypes.contains(entityType)) {
-                                        removeEntity = true;
-                                    }
-
-                                    if (finalNamed == null && entity.getCustomName() != null) {
-                                        removeEntity = false;
-                                    } else if (finalNamed != null) {
-                                        if(finalNamedOnly) {
-                                            if(finalNamed.isEmpty()) {
-                                                if (entity.getCustomName() == null) {
-                                                    removeEntity = false;
+                                        } else if (finalRemoveAnimals && entity instanceof Animals) {
+                                            removeEntity = true;
+                                        } else if (finalRemoveAmbient && entity instanceof Ambient) {
+                                            removeEntity = true;
+                                        } else if (finalRemoveVehicles && entity instanceof Vehicle && !(entity instanceof LivingEntity)) {
+                                            removeEntity = true;
+                                        } else if (finalRemoveItems && entity instanceof Item item) {
+                                            if(specificItems.size() > 0) {
+                                                if(specificItems.contains(item.getItemStack().getType())) {
+                                                    removeEntity = true;
                                                 }
                                             } else {
-                                                if (entity.getCustomName() == null || !entity.getCustomName().equalsIgnoreCase(finalNamed)) {
+                                                removeEntity = true;
+                                            }
+                                        }
+
+                                        if (specificTypes.contains(entityType)) {
+                                            removeEntity = true;
+                                        }
+
+                                        if (finalNamed == null && entity.getCustomName() != null) {
+                                            removeEntity = false;
+                                        } else if (finalNamed != null) {
+                                            if(finalNamedOnly) {
+                                                if(finalNamed.isEmpty()) {
+                                                    if (entity.getCustomName() == null) {
+                                                        removeEntity = false;
+                                                    }
+                                                } else {
+                                                    if (entity.getCustomName() == null || !entity.getCustomName().equalsIgnoreCase(finalNamed)) {
+                                                        removeEntity = false;
+                                                    }
+                                                }
+                                            } else if(!finalNamed.isEmpty()) {
+                                                if (entity.getCustomName() != null && !entity.getCustomName().equalsIgnoreCase(finalNamed)) {
                                                     removeEntity = false;
                                                 }
                                             }
-                                        } else if(!finalNamed.isEmpty()) {
-                                            if (entity.getCustomName() != null && !entity.getCustomName().equalsIgnoreCase(finalNamed)) {
-                                                removeEntity = false;
+                                        }
+
+                                        if (!finalRemoveTamed && entity instanceof Tameable tamed && tamed.isTamed()) {
+                                            removeEntity = false;
+                                        } else if(finalRemoveTamed && finalTamedOnly && (!(entity instanceof Tameable tamed) || !tamed.isTamed())) {
+                                            removeEntity = false;
+                                        }
+
+                                        if (!finalRemoveNpcs && entity.hasMetadata("NPC")) {
+                                            removeEntity = false;
+                                        } else if(finalRemoveNpcs && finalNpcsOnly && !entity.hasMetadata("NPC")) {
+                                            removeEntity = false;
+                                        }
+
+                                        if (removeEntity) {
+                                            entitiesToRemove.add(entity);
+                                            int amount = 1;
+                                            if (removals.containsKey(entityType)) {
+                                                amount += removals.get(entityType);
                                             }
+                                            removals.put(entityType, amount);
+                                            totalAmount++;
                                         }
-                                    }
-
-                                    if (!finalRemoveTamed && entity instanceof Tameable tamed && tamed.isTamed()) {
-                                        removeEntity = false;
-                                    } else if(finalRemoveTamed && finalTamedOnly && (!(entity instanceof Tameable tamed) || !tamed.isTamed())) {
-                                        removeEntity = false;
-                                    }
-
-                                    if (!finalRemoveNpcs && entity.hasMetadata("NPC")) {
-                                        removeEntity = false;
-                                    } else if(finalRemoveNpcs && finalNpcsOnly && !entity.hasMetadata("NPC")) {
-                                        removeEntity = false;
-                                    }
-
-                                    if (removeEntity) {
-                                        entitiesToRemove.add(entity);
-                                        int amount = 1;
-                                        if (removals.containsKey(entityType)) {
-                                            amount += removals.get(entityType);
-                                        }
-                                        removals.put(entityType, amount);
-                                        totalAmount++;
                                     }
                                 }
                             }
+                            int finalTotalAmount = totalAmount;
+                            Bukkit.getScheduler().runTask(plugin, () -> {
+                                entitiesToRemove.forEach(Entity::remove);
+                                if (!finalSilent) {
+                                    String successMsg = Objects.requireNonNull(langConf.getString("region-clear.successful-clear")).replaceAll("\\[name]", finalRegionIds.toString());
+                                    successMsg = successMsg.replaceAll("\\[amount]", String.valueOf(finalTotalAmount));
+                                    StringBuilder entitySpecific = new StringBuilder();
+                                    String entitySpecificFormat = langConf.getString("region-clear.successful-clear-entity-specific");
+                                    int i = 1;
+                                    for (EntityType entityType : removals.keySet()) {
+                                        entitySpecific.append(Objects.requireNonNull(entitySpecificFormat).replaceAll("\\[entity]", String.valueOf(entityType)).replaceAll("\\[amount]", String.valueOf(removals.get(entityType))));
+                                        if (i != removals.size()) entitySpecific.append(" ");
+                                        i++;
+                                    }
+                                    successMsg = successMsg.replaceAll("\\[entity-specific]", entitySpecific.toString());
+                                    sender.sendMessage(plugin.colourMessage(prefix + successMsg));
+                                }
+                            });
                         }
-                        int finalTotalAmount = totalAmount;
-                        Bukkit.getScheduler().runTask(plugin, () -> {
-                            entitiesToRemove.forEach(Entity::remove);
-                            if (!finalSilent) {
-                                String successMsg = Objects.requireNonNull(langConf.getString("region-clear.successful-clear")).replaceAll("\\[name]", finalRegionIds.toString());
-                                successMsg = successMsg.replaceAll("\\[amount]", String.valueOf(finalTotalAmount));
-                                StringBuilder entitySpecific = new StringBuilder();
-                                String entitySpecificFormat = langConf.getString("region-clear.successful-clear-entity-specific");
-                                int i = 1;
-                                for (EntityType entityType : removals.keySet()) {
-                                    entitySpecific.append(Objects.requireNonNull(entitySpecificFormat).replaceAll("\\[entity]", String.valueOf(entityType)).replaceAll("\\[amount]", String.valueOf(removals.get(entityType))));
-                                    if (i != removals.size()) entitySpecific.append(" ");
-                                    i++;
-                                }
-                                successMsg = successMsg.replaceAll("\\[entity-specific]", entitySpecific.toString());
-                                sender.sendMessage(plugin.colourMessage(prefix + successMsg));
-                            }
-                        });
-                    }
-                }.runTaskAsynchronously(plugin);
+                    }.runTaskAsynchronously(plugin);
+                } else {
+                    sender.sendMessage(plugin.colourMessage(prefix + Objects.requireNonNull(langConf.getString("region-clear.no-such-region")).replaceAll("\\[name]", falseRegions.toString())));
+                }
             } else {
-                sender.sendMessage(plugin.colourMessage(prefix + Objects.requireNonNull(langConf.getString("region-clear.no-such-region")).replaceAll("\\[name]", falseRegions.toString())));
+                sender.sendMessage(plugin.colourMessage(prefix + langConf.getString("region-clear.no-world-specified")));
             }
         } else {
             sender.sendMessage(plugin.colourMessage(prefix + langConf.getString("region-clear.wrong-usage")));
