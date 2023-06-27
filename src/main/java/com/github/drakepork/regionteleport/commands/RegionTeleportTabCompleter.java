@@ -16,6 +16,9 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.*;
 
+import static com.github.drakepork.regionteleport.RegionTeleport.cmiAddon;
+import static com.github.drakepork.regionteleport.RegionTeleport.essAddon;
+
 public class RegionTeleportTabCompleter implements TabCompleter {
 	private final RegionTeleport plugin;
 
@@ -79,10 +82,10 @@ public class RegionTeleportTabCompleter implements TabCompleter {
 				String[] addonSplit = args[2].split(":");
 				switch (args[0].toLowerCase()) {
 					case "tp", "teleport" -> {
-						if (args[2].startsWith("cmi:") && plugin.cmiAddon != null) {
-							commands.addAll(plugin.cmiAddon.warps());
-						} else if (args[2].startsWith("ess:") && plugin.essAddon != null) {
-							commands.addAll(plugin.essAddon.warps());
+						if (args[2].startsWith("cmi:") && cmiAddon != null) {
+							commands.addAll(cmiAddon.warps());
+						} else if (args[2].startsWith("ess:") && essAddon != null) {
+							commands.addAll(essAddon.warps());
 						} else {
 							File spawnloc = new File(this.plugin.getDataFolder() + File.separator + "spawnlocations.yml");
 							YamlConfiguration spawnConf = YamlConfiguration.loadConfiguration(spawnloc);

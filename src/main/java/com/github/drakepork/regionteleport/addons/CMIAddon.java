@@ -13,7 +13,6 @@ public class CMIAddon {
 			return null;
 		}
 	}
-
 	public Collection<String> warps() {
 		return CMI.getInstance().getWarpManager().getWarps().keySet();
 	}

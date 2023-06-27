@@ -9,16 +9,17 @@ import java.io.IOException;
 
 public class LangCreator {
 	private final RegionTeleport plugin;
-
+	public static File langFile;
+	public static FileConfiguration langConf;
 	public LangCreator(final RegionTeleport plugin) {
 		this.plugin = plugin;
 	}
 
 	public void init() {
-		File lang = new File(this.plugin.getDataFolder() + File.separator
+		langFile = new File(plugin.getDataFolder() + File.separator
 				+ "lang" + File.separator + plugin.getConfig().getString("lang-file"));
 		try {
-			FileConfiguration langConf = YamlConfiguration.loadConfiguration(lang);
+			langConf = YamlConfiguration.loadConfiguration(langFile);
 
 			// Global Messages
 
@@ -29,7 +30,7 @@ public class LangCreator {
 			// Spawn Related Messages
 
 			langConf.addDefault("spawn.specify-loc-name", "&cPlease specify a location name...");
-			langConf.addDefault("spawn.wrong-usage-setspawn", "&cIncorrect usage! /regiontp setspawn <name>");
+			langConf.addDefault("spawn.wrong-usage-setspawn", "&cIncorrect usage! /regiontp setspawn <name> (-x:<x>) (-y:<y>) (-z:<z>) (-w:<world>) (-yaw:<yaw>) (-p:<pitch>)");
 			langConf.addDefault("spawn.wrong-usage-delspawn", "&cIncorrect usage! /regiontp delspawn <name>");
 			langConf.addDefault("spawn.no-such-spawn", "&cNo spawn with name &7[name] &cexists!");
 			langConf.addDefault("spawn.wrong-usage-spawnlist", "&cIncorrect usage! /regiontp spawnlist");
@@ -47,7 +48,7 @@ public class LangCreator {
 
 			// Teleport Related Messages
 
-			langConf.addDefault("teleport.wrong-usage", "&cIncorrect Usage! /regiontp tp <region(s)> <spawn(s)> (-s)");
+			langConf.addDefault("teleport.wrong-usage", "&cIncorrect Usage! /regiontp tp <region(s)> <spawn(s)> (world) (-s)");
 			langConf.addDefault("teleport.successful-teleport", "&aSent &e[amount] &aplayer(s) from region(s) &2[region] &ato spawnlocation(s) &2[name]&a!");
 			langConf.addDefault("teleport.no-such-region", "&cNo region with name &7[name] &cexists in this world!");
 
@@ -65,14 +66,8 @@ public class LangCreator {
 			langConf.addDefault("region-clear.wrong-usage", "&cIncorrect Usage! /regionclear <region> (types) (-s) (-w:[world])");
 			langConf.addDefault("region-clear.no-such-region", "&cNo region with name &7[name] &cexists in this world!");
 
-			// Console Related Messages
-
-			langConf.addDefault("console.wrong-usage-setspawn", "&cIncorrect usage! /regiontp setspawn <name> <x> <y> <z> <world>");
-			langConf.addDefault("console.no-such-world", "&cNo world with name &7[name] &cexists!");
-			langConf.addDefault("console.wrong-usage-teleport", "&cIncorrect Usage! /regiontp tp <region(s)> <spawn(s)> <world> (-s)");
-
 			langConf.options().copyDefaults(true);
-			langConf.save(lang);
+			langConf.save(langFile);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

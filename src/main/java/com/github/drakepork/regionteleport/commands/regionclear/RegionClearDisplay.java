@@ -1,4 +1,4 @@
-package com.github.drakepork.regionteleport.commands.regionclearcommands;
+package com.github.drakepork.regionteleport.commands.regionclear;
 
 import com.github.drakepork.regionteleport.RegionTeleport;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
@@ -20,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.*;
+
+import static com.github.drakepork.regionteleport.RegionTeleport.colourMessage;
 
 public class RegionClearDisplay implements RegionClear {
     @Override
@@ -66,11 +68,11 @@ public class RegionClearDisplay implements RegionClear {
                         if(Bukkit.getWorld(worldName[1]) != null) {
                             world = Objects.requireNonNull(Bukkit.getWorld(worldName[1]));
                         } else {
-                            sender.sendMessage(plugin.colourMessage(prefix + Objects.requireNonNull(langConf.getString("region-clear.no-such-world")).replaceAll("\\[name]", worldName[1])));
+                            sender.sendMessage(colourMessage(prefix + Objects.requireNonNull(langConf.getString("region-clear.no-such-world")).replaceAll("\\[name]", worldName[1])));
                             return;
                         }
                     } else {
-                        sender.sendMessage(plugin.colourMessage(prefix + langConf.getString("region-clear.wrong-usage-specific")));
+                        sender.sendMessage(colourMessage(prefix + langConf.getString("region-clear.wrong-usage-specific")));
                         return;
                     }
                 } else if(lowerType.contains("-named")) {
@@ -92,12 +94,12 @@ public class RegionClearDisplay implements RegionClear {
                                 EntityType entityType = EntityType.valueOf(entity.toUpperCase());
                                 specificTypes.add(entityType);
                             } catch (IllegalArgumentException ignored) {
-                                sender.sendMessage(plugin.colourMessage(prefix + Objects.requireNonNull(langConf.getString("region-clear.no-such-specific")).replaceAll("\\[name]", entity)));
+                                sender.sendMessage(colourMessage(prefix + Objects.requireNonNull(langConf.getString("region-clear.no-such-specific")).replaceAll("\\[name]", entity)));
                                 return;
                             }
                         }
                     } else {
-                        sender.sendMessage(plugin.colourMessage(prefix + langConf.getString("region-clear.wrong-usage-specific")));
+                        sender.sendMessage(colourMessage(prefix + langConf.getString("region-clear.wrong-usage-specific")));
                         return;
                     }
                 } else if(lowerType.equalsIgnoreCase("-monsters")) {
@@ -111,7 +113,7 @@ public class RegionClearDisplay implements RegionClear {
                             if(Material.getMaterial(item.toUpperCase()) != null) {
                                 specificItems.add(Material.getMaterial(item.toUpperCase()));
                             } else {
-                                sender.sendMessage(plugin.colourMessage(prefix + Objects.requireNonNull(langConf.getString("region-clear.no-such-item")).replaceAll("\\[name]", item)));
+                                sender.sendMessage(colourMessage(prefix + Objects.requireNonNull(langConf.getString("region-clear.no-such-item")).replaceAll("\\[name]", item)));
                                 return;
                             }
                         }
@@ -285,19 +287,19 @@ public class RegionClearDisplay implements RegionClear {
                                         i++;
                                     }
                                     successMsg = successMsg.replaceAll("\\[entity-specific]", entitySpecific.toString());
-                                    sender.sendMessage(plugin.colourMessage(prefix + successMsg));
+                                    sender.sendMessage(colourMessage(prefix + successMsg));
                                 }
                             });
                         }
                     }.runTaskAsynchronously(plugin);
                 } else {
-                    sender.sendMessage(plugin.colourMessage(prefix + Objects.requireNonNull(langConf.getString("region-clear.no-such-region")).replaceAll("\\[name]", falseRegions.toString())));
+                    sender.sendMessage(colourMessage(prefix + Objects.requireNonNull(langConf.getString("region-clear.no-such-region")).replaceAll("\\[name]", falseRegions.toString())));
                 }
             } else {
-                sender.sendMessage(plugin.colourMessage(prefix + langConf.getString("region-clear.no-world-specified")));
+                sender.sendMessage(colourMessage(prefix + langConf.getString("region-clear.no-world-specified")));
             }
         } else {
-            sender.sendMessage(plugin.colourMessage(prefix + langConf.getString("region-clear.wrong-usage")));
+            sender.sendMessage(colourMessage(prefix + langConf.getString("region-clear.wrong-usage")));
         }
     }
 }

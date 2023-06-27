@@ -3,10 +3,8 @@ package com.github.drakepork.regionteleport.utils;
 import org.bukkit.configuration.file.FileConfiguration;
 import com.github.drakepork.regionteleport.RegionTeleport;
 
-
 public class ConfigCreator {
 	private final RegionTeleport plugin;
-
 	public ConfigCreator(final RegionTeleport plugin) {
 		this.plugin = plugin;
 	}

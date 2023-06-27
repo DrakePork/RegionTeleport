@@ -9,12 +9,10 @@ import org.bukkit.Location;
 import java.util.Collection;
 import java.util.Objects;
 
-public class EssentialsAddon {
-
+public class ESSAddon {
 	private Essentials getEssentials() {
 		return (Essentials) Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("Essentials"));
 	}
-
 	public Location warpLoc(String warpName) {
 		try {
 			return getEssentials().getWarps().getWarp(warpName);
@@ -22,11 +20,9 @@ public class EssentialsAddon {
 			return null;
 		}
 	}
-
 	public boolean isWarp(String warpName) {
 		return getEssentials().getWarps().isWarp(warpName);
 	}
-
 	public Collection<String> warps() {
 		return getEssentials().getWarps().getList();
 	}
