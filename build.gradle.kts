@@ -22,7 +22,7 @@ repositories {
 
 dependencies {
     implementation("org.bstats:bstats-bukkit:3.0.2")
-    implementation("dev.jorel:commandapi-bukkit-shade-mojang-mapped:9.5.0")
+    implementation("dev.jorel:commandapi-bukkit-shade-mojang-mapped:9.5.1")
     compileOnly("io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.9-beta1")
     compileOnly("net.essentialsx:EssentialsX:2.20.1")
@@ -72,7 +72,7 @@ tasks.withType<JavaCompile> {
 
 tasks.withType<ShadowJar> {
     dependencies {
-        include(dependency("dev.jorel:commandapi-bukkit-shade-mojang-mapped:9.5.0"))
+        include(dependency("dev.jorel:commandapi-bukkit-shade-mojang-mapped:9.5.1"))
         include(dependency("org.bstats:bstats-base:3.0.2"))
         include(dependency("org.bstats:bstats-bukkit:3.0.2"))
     }
