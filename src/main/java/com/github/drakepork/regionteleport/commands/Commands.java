@@ -52,7 +52,7 @@ public class Commands {
                 .append(text(" RegionTeleport ", fromHexString("#8dd9c3"), BOLD))
                 .append(line);
         msg = msg.append(text("\n<> - Required, () - Optional", GRAY));
-        msg = msg.append(text("\n- ", DARK_GRAY).append(text("/regiontp help (page)", fromHexString("#8dd9c3")).append(text(" - ", GRAY))
+        msg = msg.append(text("\n- ", DARK_GRAY).append(text("/regiontp help", fromHexString("#8dd9c3")).append(text(" - ", GRAY))
                 .append(text("Shows this", WHITE))).clickEvent(ClickEvent.suggestCommand("/regiontp help")));
 
         msg = msg.append(text("\n- ", DARK_GRAY).append(text("/regiontp reload", fromHexString("#8dd9c3")).append(text(" - ", GRAY))
