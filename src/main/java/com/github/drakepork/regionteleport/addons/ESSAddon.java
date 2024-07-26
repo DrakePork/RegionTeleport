@@ -13,6 +13,7 @@ public class ESSAddon {
 	private Essentials getEssentials() {
 		return (Essentials) Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("Essentials"));
 	}
+
 	public Location warpLoc(String warpName) {
 		try {
 			return getEssentials().getWarps().getWarp(warpName);
@@ -20,10 +21,12 @@ public class ESSAddon {
 			return null;
 		}
 	}
+
 	public boolean isWarp(String warpName) {
 		return getEssentials().getWarps().isWarp(warpName);
 	}
+
 	public Collection<String> warps() {
-		return getEssentials().getWarps().getList();
+		return getEssentials().getWarps().getList().stream().map(warp -> "ess:" + warp).toList();
 	}
 }

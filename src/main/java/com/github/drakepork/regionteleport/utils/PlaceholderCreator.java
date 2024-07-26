@@ -16,6 +16,9 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PlaceholderCreator extends PlaceholderExpansion {
     private final RegionTeleport plugin;
     public PlaceholderCreator(final RegionTeleport plugin) {
@@ -34,7 +37,7 @@ public class PlaceholderCreator extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getVersion() {
-        return plugin.getDescription().getVersion();
+        return plugin.getPluginMeta().getVersion();
     }
 
     @Override
@@ -42,78 +45,43 @@ public class PlaceholderCreator extends PlaceholderExpansion {
         return true;
     }
 
+
+    private String getRegionPlayerCount(String worldName, String regionName, boolean excludeBypass) {
+        World world = Bukkit.getWorld(worldName);
+        if (world == null) return null;
+
+        RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+        RegionManager regions = container.get(BukkitAdapter.adapt(world));
+        if(regions == null) return null;
+
+        if(regionName.equalsIgnoreCase("__global__")) return String.valueOf(world.getPlayerCount());
+
+        ProtectedRegion region = regions.getRegion(regionName);
+        if(region == null) return null;
+
+        List<Player> players = new ArrayList<>(world.getPlayers().stream().filter(p -> {
+            Location loc = p.getLocation();
+            return region.contains(BukkitAdapter.adapt(loc).toVector().toBlockPoint());
+        }).toList());
+
+        if(excludeBypass) {
+            players.removeIf(p -> p.hasPermission("regionteleport.teleport.bypass"));
+        }
+        return String.valueOf(players.size());
+    }
+
     @Override
     public String onRequest(OfflinePlayer player, String params) {
         if(params.startsWith("player_count_w:") && params.contains("_r:")) { // regionteleport_player_count_w:<world>_r:<region>
             String worldName = params.split("_w:")[1].split("_r:")[0];
-            if (Bukkit.getWorld(worldName) != null) {
-                World world = Bukkit.getWorld(worldName);
-                String regionName = params.split("_r:")[1];
-
-                RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-                assert world != null;
-                RegionManager regions = container.get(BukkitAdapter.adapt(world));
-                assert regions != null;
-                if (regions.getRegion(regionName) != null || regionName.equalsIgnoreCase("__global__")) {
-                    int playerCount = 0;
-                    for (Player pOnline : Bukkit.getServer().getOnlinePlayers()) {
-                        if (regionName.equalsIgnoreCase("__global__") && pOnline.getWorld() == world) {
-                            playerCount++;
-                        } else {
-                            Location location = pOnline.getLocation();
-                            BlockVector3 v = BlockVector3.at(location.getX(), location.getY(), location.getZ());
-                            ApplicableRegionSet set = regions.getApplicableRegions(v);
-                            for (ProtectedRegion r : set) {
-                                if (r.getId().equalsIgnoreCase(regionName)) {
-                                    playerCount++;
-                                }
-                            }
-                        }
-                    }
-                    return String.valueOf(playerCount);
-                } else { // region not found
-                    return null;
-                }
-            } else { // world not found
-                return null;
-            }
+            String regionName = params.split("_r:")[1];
+            return getRegionPlayerCount(worldName, regionName, false);
         }
 
         if(params.startsWith("player_count_exclude_bypass_w:") && params.contains("_r:")) { // regionteleport_player_count_exclude_bypass_w:<world>_r:<region>
             String worldName = params.split("_w:")[1].split("_r:")[0];
-            if (Bukkit.getWorld(worldName) != null) {
-                World world = Bukkit.getWorld(worldName);
-                String regionName = params.split("_r:")[1];
-
-                RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-                assert world != null;
-                RegionManager regions = container.get(BukkitAdapter.adapt(world));
-                assert regions != null;
-                if (regions.getRegion(regionName) != null || regionName.equalsIgnoreCase("__global__")) {
-                    int playerCount = 0;
-                    for (Player pOnline : Bukkit.getServer().getOnlinePlayers()) {
-                        if (!pOnline.hasPermission("regionteleport.teleport.bypass")) {
-                            if (regionName.equalsIgnoreCase("__global__") && pOnline.getWorld() == world) {
-                                playerCount++;
-                            } else {
-                                Location location = pOnline.getLocation();
-                                BlockVector3 v = BlockVector3.at(location.getX(), location.getY(), location.getZ());
-                                ApplicableRegionSet set = regions.getApplicableRegions(v);
-                                for (ProtectedRegion r : set) {
-                                    if (r.getId().equalsIgnoreCase(regionName)) {
-                                        playerCount++;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    return String.valueOf(playerCount);
-                } else { // region not found
-                    return null;
-                }
-            } else { // world not found
-                return null;
-            }
+            String regionName = params.split("_r:")[1];
+            return getRegionPlayerCount(worldName, regionName, true);
         }
 
         return null;

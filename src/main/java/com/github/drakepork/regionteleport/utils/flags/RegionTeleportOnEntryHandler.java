@@ -14,10 +14,8 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.Collections;
-import java.util.List;
+import static com.github.drakepork.regionteleport.RegionTeleport.getSpawn;
 
-import static com.github.drakepork.regionteleport.commands.RegionTeleportCommands.*;
 
 public class RegionTeleportOnEntryHandler extends FlagValueChangeHandler<String> {
     public static Factory FACTORY(Plugin plugin) { return new Factory(plugin); }
@@ -66,23 +64,11 @@ public class RegionTeleportOnEntryHandler extends FlagValueChangeHandler<String>
                     player.removeMetadata("regionteleport-stop-teleport-looping", plugin);
                 }
             }.runTask(plugin);
-            String addon = getAddon(value);
-            String isDisabled = isAddonDisabled(addon);
-            if (isDisabled.isEmpty()) {
-                List<String> spawnIds = getSpawns(value);
-                if (!spawnIds.isEmpty()) {
-                    List<String> invalidSpawns = getInvalidSpawns(spawnIds, addon);
-                    if (!invalidSpawns.isEmpty()) invalidSpawns.forEach(spawnIds::remove);
 
-                    if (!spawnIds.isEmpty()) {
-                        Collections.shuffle(spawnIds);
-                        org.bukkit.Location loc = getLocation(spawnIds.get(0), addon);
-                        if (loc != null) {
-                            player.teleport(loc);
-                        }
-                    }
-                }
-            }
+            org.bukkit.Location loc = getSpawn(value);
+            if(loc == null) return;
+            player.teleportAsync(loc);
+
         }
     }
 }

@@ -1,23 +1,11 @@
-name: RegionTeleport
-version: 3.2.0
+name: $name
+version: $version
+description: $description
+api-version: "$apiVersion"
 main: com.github.drakepork.regionteleport.RegionTeleport
-api-version: '1.18'
 depend: [WorldGuard]
-softdepend: [CMI, Essentials, CMILib, PlaceholderAPI]
+softdepend: [CMI, Essentials, PlaceholderAPI]
 author: DrakePork
-description: A plugin to teleport anyone inside a worldguard region to a specified point.
-commands:
-  regiontp:
-    description: Contains the teleport commands of the plugin
-    usage: /<command>
-    aliases: [regionteleport]
-    permission: regionteleport.command.help
-    permission-message: §4Error:§c You do not have permission to execute this command...
-  regionclear:
-    description: Clear entities from a WG region
-    usage: /<command>
-    permission: regionteleport.command.clear
-    permission-message: §4Error:§c You do not have permission to execute this command...
 permissions:
   regionteleport.command.*:
     description: Gives access to all regiontp commands
@@ -28,21 +16,7 @@ permissions:
       regionteleport.command.spawnlist: true
       regionteleport.command.teleport: true
       regionteleport.command.clear: true
-  regionteleport.command.help:
-    description: Gives access to /regiontp help
-  regionteleport.command.setspawn:
-    description: Gives access to /regiontp setspawn <name>
-  regionteleport.command.delspawn:
-    description: Gives access to /regiontp delspawn <name>
-  regionteleport.command.spawnlist:
-    description: Gives access to /regiontp spawnlist
-  regionteleport.command.reload:
-    description: Gives access to /regiontp reload
-  regionteleport.command.teleport:
-    description: Gives access to /regiontp tp
   regionteleport.teleport.bypass:
     description: Does so you dont get teleported from the region
     default: false
-  regionteleport.command.clear:
-    description: Gives access to /regionclear
 

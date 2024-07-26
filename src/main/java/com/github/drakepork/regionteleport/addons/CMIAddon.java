@@ -4,6 +4,7 @@ import com.Zrips.CMI.CMI;
 import org.bukkit.Location;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 public class CMIAddon {
 	public Location warpLoc(String warpName) {
@@ -13,7 +14,8 @@ public class CMIAddon {
 			return null;
 		}
 	}
+
 	public Collection<String> warps() {
-		return CMI.getInstance().getWarpManager().getWarps().keySet();
+		return CMI.getInstance().getWarpManager().getWarps().keySet().stream().map(warp -> "cmi:" + warp).toList();
 	}
 }
