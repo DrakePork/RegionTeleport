@@ -13,7 +13,7 @@ permissions:
       regionteleport.command.help: true
       regionteleport.command.setspawn: true
       regionteleport.command.delspawn: true
-      regionteleport.command.spawnlist: true
+      regionteleport.command.list: true
       regionteleport.command.teleport: true
       regionteleport.command.clear: true
   regionteleport.teleport.bypass:
