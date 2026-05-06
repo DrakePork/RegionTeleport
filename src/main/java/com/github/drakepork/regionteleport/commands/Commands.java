@@ -7,17 +7,13 @@ import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
-import dev.jorel.commandapi.CommandAPI;
-import dev.jorel.commandapi.CommandAPIBukkit;
-import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.SuggestionInfo;
+import dev.jorel.commandapi.*;
 import dev.jorel.commandapi.arguments.*;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.wrappers.Rotation;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.command.CommandSender;
@@ -200,7 +196,7 @@ public class Commands {
             Location loc = getSpawn(spawn);
             if(loc == null) {
                 try {
-                    throw CommandAPIBukkit.failWithAdventureComponent(prefix.append(text("Failed to get spawnlocation ", RED)
+                    throw CommandAPIPaper.failWithAdventureComponent(prefix.append(text("Failed to get spawnlocation ", RED)
                             .append(text(spawn, GRAY)).append(text("! Cancelling..", RED))));
                 } catch (WrapperCommandSyntaxException e) {
                     throw new RuntimeException(e);
@@ -253,7 +249,7 @@ public class Commands {
             String[] split = specifics.split(":");
 
             if(split.length < 2 || split[1].isEmpty()) {
-                throw CommandAPIBukkit.failWithAdventureComponent(prefix.append(text("No entity types specified in specific! Example: specific:zombie,cow", RED)));
+                throw CommandAPIPaper.failWithAdventureComponent(prefix.append(text("No entity types specified in specific! Example: specific:zombie,cow", RED)));
             }
             List<String> specific = Arrays.asList(split[1].split(","));
             if(!specific.isEmpty()) {
@@ -268,7 +264,7 @@ public class Commands {
                 });
 
                 if(!invalid.isEmpty()) {
-                    throw CommandAPIBukkit.failWithAdventureComponent(prefix.append(text("Invalid entity type(s) ", RED).append(text(invalid.toString(), GRAY))));
+                    throw CommandAPIPaper.failWithAdventureComponent(prefix.append(text("Invalid entity type(s) ", RED).append(text(invalid.toString(), GRAY))));
                 }
             }
         }
@@ -299,7 +295,7 @@ public class Commands {
                 }).toList();
 
                 if(!invalid.isEmpty()) {
-                    throw CommandAPIBukkit.failWithAdventureComponent(prefix.append(text("Invalid item type(s) ", RED).append(text(invalid.toString(), GRAY))));
+                    throw CommandAPIPaper.failWithAdventureComponent(prefix.append(text("Invalid item type(s) ", RED).append(text(invalid.toString(), GRAY))));
                 }
                 if(!itemTypes.isEmpty()) {
                     entities = entities.stream().filter(entity -> !(entity instanceof Item item) || itemTypes.contains(item.getItemStack().getType())).toList();

@@ -2,7 +2,6 @@ package com.github.drakepork.regionteleport.addons;
 
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.commands.WarpNotFoundException;
-import net.ess3.api.InvalidWorldException;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
@@ -17,7 +16,7 @@ public class ESSAddon {
 	public Location warpLoc(String warpName) {
 		try {
 			return getEssentials().getWarps().getWarp(warpName);
-		} catch (WarpNotFoundException | InvalidWorldException e) {
+		} catch (WarpNotFoundException e) {
 			return null;
 		}
 	}

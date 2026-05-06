@@ -4,7 +4,6 @@ import com.Zrips.CMI.CMI;
 import org.bukkit.Location;
 
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 public class CMIAddon {
 	public Location warpLoc(String warpName) {
