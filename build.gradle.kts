@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.github.drakepork"
-version = "4.0.1"
+version = "4.0.2"
 description = "A plugin to teleport players inside specific worldguard region(s) to specific location(s)."
 
 
